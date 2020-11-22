@@ -1,0 +1,7 @@
+runtime: nodejs10
+handlers:
+  - url: /
+    static_files: dist/die-lehrer-hilfe/index.html
+    upload: dist/die-lehrer-hilfe/index.html
+  - url: /
+    static_dir: dist/die-lehrer-hilfe
