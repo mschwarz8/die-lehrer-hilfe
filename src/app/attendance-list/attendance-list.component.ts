@@ -101,14 +101,10 @@ export class AttendanceListComponent implements OnInit {
     // this.totalColumnDescriptions.push('actionColumn');
     const columnDescriptions: string[] = [];
     for (const lesson of LESSONS_DATA) {
-      console.log(lesson);
       if (!columnDescriptions.includes(lesson.dateTimestampInMs.toString())) {
         columnDescriptions.push(lesson.dateTimestampInMs.toString());
       }
     }
-    console.log(columnDescriptions);
-    console.log(this.lessonColumnDescriptions);
-    console.log(this.totalColumnDescriptions);
     this.lessonColumnDescriptions = this.lessonColumnDescriptions.concat(columnDescriptions);
     // Sort by date
     this.lessonColumnDescriptions.sort((a, b) => +a < +b ? -1 : 0);
