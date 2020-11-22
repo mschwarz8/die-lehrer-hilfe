@@ -5,12 +5,8 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
+      imports: [RouterTestingModule],
+      declarations: [AppComponent]
     }).compileComponents();
   }));
 
@@ -20,10 +16,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'die-lehrer-hilfe'`, () => {
+  it(`should have as title 'Die LehrerHilfe'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('die-lehrer-hilfe');
+    expect(app.title).toEqual('Die LehrerHilfe');
   });
 
   it('should render title', () => {
