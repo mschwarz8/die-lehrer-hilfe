@@ -1,0 +1,39 @@
+.component-container {
+  padding: 8px;
+}
+
+.component-header {
+  padding: 8px;
+}
+
+.example-container {
+  width: 100%;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.lesson-column-header {
+  text-align: center !important;
+}
+
+.lesson-column-row {
+  text-align: center !important;
+}
+
+// Since we're having two sticky headers
+.mat-table-sticky:nth-child(-n+2) {
+  border-right: 1px solid #e0e0e0;
+  padding: 0 8px;
+}
+
+.mat-table-sticky:last-child {
+  border-left: 1px solid #e0e0e0;
+}
+
+.mat-header-cell, .mat-footer-cell, .mat-cell {
+  min-width: 90px !important;
+  box-sizing: border-box !important;
+}
