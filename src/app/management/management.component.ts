@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 
 export interface Class {
   externalId: string;
@@ -22,10 +22,16 @@ export class ManagementComponent implements OnInit {
 
   public createClassFormGroup: FormGroup | undefined;
 
-  public createNewClassMode = false;
+  public createNewClassMode = true;
+
+  public createClassRequestPerforming = false;
 
   public displayedColumns: string[] = ['className', 'numberStudents'];
   public dataSource = ELEMENT_DATA;
+
+  public get atLeastOneStudentFormGroupPresent(): boolean {
+    return !!this.students && this.students.length > 0;
+  }
 
   constructor(private fb: FormBuilder) { }
 
@@ -36,11 +42,33 @@ export class ManagementComponent implements OnInit {
     });
   }
 
-  public createNewClass() {
-    console.log('TODO: Erstelle neue Klasse...');
+  public addNewStudent(): void {
+    this.students.push(this.fb.group({
+      firstName: [null, Validators.required],
+      lastName: [null, Validators.required]
+    }));
   }
 
-  public get classNameFormControl(): any {
-    return this.createClassFormGroup.get('className');
+  public removeLastStudent(): void {
+    if (this.atLeastOneStudentFormGroupPresent) {
+      this.students.removeAt(this.students.length - 1);
+    }
+  }
+
+  public enterCreateNewClassMode(): void {
+    this.createNewClassMode = true;
+  }
+
+  public createNewClass(): void {
+    console.log('TODO: Erstelle neue Klasse...');
+    this.createClassRequestPerforming = true;
+  }
+
+  public get classNameFormControl(): FormControl {
+    return this.createClassFormGroup.get('className') as FormControl;
+  }
+
+  public get students(): FormArray {
+    return this.createClassFormGroup.get('students') as FormArray;
   }
 }

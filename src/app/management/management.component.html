@@ -21,7 +21,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
-  <button mat-raised-button color="primary" style="margin: 16px 0" (click)="createNewClassMode = true">
+  <button mat-raised-button color="primary" style="margin: 16px 0" (click)="enterCreateNewClassMode()">
     Neue Klasse erstellen
   </button>
 
@@ -35,26 +35,74 @@
           Klassenname ist notwendig um eine Klasse zu erstellen.
         </mat-error>
       </mat-form-field>
-<!--      TODO: Create FormArray to create new students-->
-<!--      <mat-form-field class="form-field">-->
-<!--        <mat-label>Vorname</mat-label>-->
-<!--        <input type="text" matInput formControlName="firstName" placeholder="Vorname (z.B. 'Max')" />-->
-<!--        <mat-error *ngIf="classNameFormControl.hasError('required')">-->
-<!--          Klassenname ist notwendig um eine Klasse zu erstellen.-->
-<!--        </mat-error>-->
-<!--      </mat-form-field>-->
-<!--      <mat-form-field class="form-field">-->
-<!--        <mat-label>Nachname</mat-label>-->
-<!--        <input type="text" matInput formControlName="lastName" placeholder="Nachname (z.B. 'Mustermann')" />-->
-<!--        <mat-hint>Ein Klassenname muss eindeutig sein.</mat-hint>-->
-<!--        <mat-error *ngIf="classNameFormControl.hasError('required')">-->
-<!--          Klassenname ist notwendig um eine Klasse zu erstellen.-->
-<!--        </mat-error>-->
-<!--      </mat-form-field>-->
+
+      <ng-container *ngIf="students.controls.length > 0" formArrayName="students">
+        <mat-label fxLayout="row" style="padding-top: 16px">Schüler</mat-label>
+        <div *ngFor="let studentFormGroup of students.controls">
+          <form [formGroup]="studentFormGroup">
+            <div
+              class="container"
+              fxLayout="row"
+              fxLayout.xs="column"
+              fxLayoutWrap
+              fxLayoutGap="2%"
+              fxLayoutAlign="center"
+            >
+              <div fxLayout="column" fxFlex="50%">
+                <mat-form-field>
+                  <input type="text" matInput formControlName="firstName" placeholder="Vorname (z.B. 'Max')" />
+                  <mat-error *ngIf="studentFormGroup.get('firstName').hasError('required')">
+                    Vorname ist notwendig um einen Schüler zu erstellen.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxLayout="column" fxFlex="50%">
+                <mat-form-field>
+                  <input type="text" matInput formControlName="lastName" placeholder="Nachname (z.B. 'Mustermann')" />
+                  <mat-error *ngIf="studentFormGroup.get('lastName').hasError('required')">
+                    Nachname ist notwendig um einen Schüler zu erstellen.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </ng-container>
     </form>
 
-    <button mat-raised-button color="primary" style="margin-top: 16px" (click)="createNewClass()">
-      Erstelle neue Klasse
+    <div fxLayout="row" fxLayoutGap="2%" style="padding-top: 8px">
+      <button fxLayout="column" mat-raised-button color="primary" style="margin: 16px 0" (click)="addNewStudent()">
+        + Schüler
+      </button>
+      <button
+        [disabled]="!atLeastOneStudentFormGroupPresent"
+        fxLayout="column"
+        mat-raised-button
+        color="primary"
+        style="margin: 16px 0"
+        (click)="removeLastStudent()"
+      >
+        - Schüler
+      </button>
+    </div>
+
+    <button
+      [disabled]="createClassRequestPerforming"
+      mat-raised-button
+      color="primary"
+      style="margin-top: 16px"
+      (click)="createNewClass()"
+    >
+      <div fxLayout="row" fxLayoutGap="5%">
+        <div fxLayout="column">
+          <mat-spinner
+            diameter="18"
+            *ngIf="createClassRequestPerforming"
+            style="margin: auto 0 !important;"
+          ></mat-spinner>
+        </div>
+        <div fxLayout="column">Erstelle neue Klasse</div>
+      </div>
     </button>
   </ng-container>
 </div>
