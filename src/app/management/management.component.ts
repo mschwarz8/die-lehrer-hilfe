@@ -22,7 +22,7 @@ export class ManagementComponent implements OnInit {
 
   public createClassFormGroup: FormGroup | undefined;
 
-  public createNewClassMode = true;
+  public createNewClassMode = false;
 
   public createClassRequestPerforming = false;
 
