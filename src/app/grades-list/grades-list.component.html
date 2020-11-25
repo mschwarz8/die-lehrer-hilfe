@@ -1,1 +1,31 @@
-<p>grades-list works!</p>
+<h2 class="component-header">Notenliste (Mathe 7a)</h2>
+<div class="example-container mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource">
+    <!-- FirstName Column -->
+    <ng-container matColumnDef="firstName" sticky>
+      <th mat-header-cell *matHeaderCellDef>Vorname</th>
+      <td mat-cell *matCellDef="let student">{{ student.firstName }}</td>
+    </ng-container>
+
+    <!-- LastName Column -->
+    <ng-container matColumnDef="lastName" sticky>
+      <th mat-header-cell *matHeaderCellDef>Nachname</th>
+      <td mat-cell *matCellDef="let student">{{ student.lastName }}</td>
+    </ng-container>
+
+    <ng-container *ngFor="let exam of examData" matColumnDef="{{ exam.externalId }}">
+      <th mat-header-cell *matHeaderCellDef class="exam-column-header">{{ exam.name }}</th>
+      <td mat-cell *matCellDef="let student" class="exam-column-row">
+        {{ getGradeForStudentExam(student, exam.externalId) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="totalGrade" stickyEnd>
+      <th mat-header-cell *matHeaderCellDef>Gesamt</th>
+      <td mat-cell *matCellDef="let student">{{ getTotalGrade(student) }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="totalColumnDescriptions"></tr>
+    <tr mat-row *matRowDef="let row; columns: totalColumnDescriptions"></tr>
+  </table>
+</div>

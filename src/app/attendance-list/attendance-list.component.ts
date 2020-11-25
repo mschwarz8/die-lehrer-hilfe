@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 export interface Lesson {
   externalId: string;
@@ -133,14 +133,4 @@ export class AttendanceListComponent implements OnInit {
   public getDateStringFromTimestamp(timestampInMsAsString: string): string {
     return new Date(+timestampInMsAsString).toLocaleDateString();
   }
-
-  // private fromTimestampToMMYYYY(fromTimestamp: number): string {
-  //   const fromDate: Date = new Date(fromTimestamp);
-  //   let fromMonthNumber = fromDate.getUTCMonth() + 1;
-  //   let fromMonthString = "" + fromMonthNumber;
-  //   if (fromMonthNumber < 10) {
-  //     fromMonthString = "0" + fromMonthString;
-  //   }
-  //   return fromMonthString + "/" + fromDate.getUTCFullYear();
-  // }
 }
