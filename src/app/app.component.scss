@@ -8,6 +8,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.sidenav-container {
+  // Toolbar has height of 64px
+  height: calc(100% - 64px);
+}
+
 .example-spacer {
   flex: 1 1 auto;
 }

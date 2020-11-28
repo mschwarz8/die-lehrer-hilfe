@@ -1,22 +1,21 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 <!-- Toolbar -->
 <mat-toolbar>
   <span>Die LehrerHilfe</span>
   <span class="example-spacer"></span>
+  <mat-form-field style="font-size: 14px; padding-top: 8px; width: 80px">
+    <mat-label>Klasse...</mat-label>
+    <mat-select [formControl]="currentSelectedClass">
+      <mat-option *ngFor="let availableClass of availableClasses" [value]="availableClass">
+        {{ availableClass }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <button mat-icon-button class="example-icon" (click)="snav.toggle()" aria-label="Example icon-button with menu icon">
     <mat-icon>menu</mat-icon>
   </button>
 </mat-toolbar>
 
-<mat-sidenav-container class="example-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+<mat-sidenav-container class="sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
   <mat-sidenav
     #snav
     [mode]="mobileQuery.matches ? 'over' : 'side'"

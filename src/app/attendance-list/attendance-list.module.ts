@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { AttendanceListRoutingModule } from './attendance-list-routing.module';
 import { AttendanceListComponent } from './attendance-list.component';
-import { MaterialModule } from '../shared/modules/material-module';
+import { SharedModule } from '../shared/modules/shared.module';
 
 @NgModule({
   declarations: [AttendanceListComponent],
   imports: [
-    CommonModule,
     AttendanceListRoutingModule,
-    MaterialModule
+    SharedModule
   ]
 })
 export class AttendanceListModule { }
