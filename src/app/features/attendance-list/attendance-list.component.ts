@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Select } from '@ngxs/store';
+import { UserState } from '../../shared/user/store/user.state';
 
 export interface Lesson {
   externalId: string;
@@ -94,6 +97,9 @@ export class AttendanceListComponent implements OnInit {
   dataSource = STUDENTS_DATA;
 
   totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
+
+  @Select(UserState.getSelectedClass)
+  public selectedClass$: Observable<string>;
 
   constructor() {}
 

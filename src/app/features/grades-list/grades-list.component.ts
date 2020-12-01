@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { UserState } from '../../shared/user/store/user.state';
+import { Observable } from 'rxjs';
 
 export interface Exam {
   name: string;
@@ -102,6 +105,9 @@ export class GradesListComponent implements OnInit {
   examData = EXAM_DATA;
 
   totalColumnDescriptions: string[] = [];
+
+  @Select(UserState.getSelectedClass)
+  public selectedClass$: Observable<string>;
 
   constructor() {}
 
