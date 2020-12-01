@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
+import { SchoolClass } from '../../shared/user/models/school-class';
 
 export interface Exam {
   name: string;
@@ -106,8 +107,8 @@ export class GradesListComponent implements OnInit {
 
   totalColumnDescriptions: string[] = [];
 
-  @Select(UserState.getSelectedClass)
-  public selectedClass$: Observable<string>;
+  @Select(UserState.getSelectedSchoolClass)
+  public selectedSchoolClass$: Observable<SchoolClass>;
 
   constructor() {}
 

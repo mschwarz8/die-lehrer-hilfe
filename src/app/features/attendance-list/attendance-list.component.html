@@ -1,5 +1,5 @@
-<ng-container *ngIf="selectedClass$ | async; else noClassSelected">
-  <h2 class="component-header">Anwesenheitsliste (Mathe {{ selectedClass$ | async }})</h2>
+<ng-container *ngIf="selectedSchoolClass$ | async; else noSchoolClassSelected">
+  <h2 class="component-header">Anwesenheitsliste (Mathe {{ (selectedSchoolClass$ | async).name }})</h2>
   <div class="example-container mat-elevation-z8">
     <table mat-table [dataSource]="dataSource">
       <!-- FirstName Column -->
@@ -35,7 +35,7 @@
     </table>
   </div>
 </ng-container>
-<ng-template #noClassSelected>
+<ng-template #noSchoolClassSelected>
   <h2 class="component-header">Anwesenheitsliste</h2>
   <p>Keine Klasse ausgewählt, bitte in der Toolbar auswählen!</p>
 </ng-template>

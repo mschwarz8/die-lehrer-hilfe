@@ -1,17 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-
-export interface Class {
-  externalId: string;
-  name: string;
-  grade: number;
-  numberStudents: number;
-}
-
-const ELEMENT_DATA: Class[] = [
-  {externalId: 'be6d908a-4dfb-4ab6-a6f3-f2fe8f6eae55', name: '7a', grade: 7, numberStudents: 24},
-  {externalId: 'ad4bb066-8483-4298-8f3f-272c9674437a', name: '8b', grade: 8, numberStudents: 21},
-];
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Select, Store } from '@ngxs/store';
+import { UserState } from '../../shared/user/store/user.state';
+import { Observable } from 'rxjs';
+import { CreateSchoolClassRequest } from '../../shared/user/store/user.actions';
+import { SchoolClass } from '../../shared/user/models/school-class';
 
 @Component({
   selector: 'app-management',
@@ -19,34 +12,38 @@ const ELEMENT_DATA: Class[] = [
   styleUrls: ['./management.component.scss']
 })
 export class ManagementComponent implements OnInit {
-
   public createClassFormGroup: FormGroup | undefined;
 
   public createNewClassMode = false;
 
-  public createClassRequestPerforming = false;
+  @Select(UserState.getAvailableSchoolClasses)
+  public availableSchoolClasses$: Observable<SchoolClass>;
+
+  @Select(UserState.isCreateNewSchoolClassRequestLoading)
+  public createSchoolClassRequestLoading$: Observable<boolean>;
 
   public displayedColumns: string[] = ['className', 'numberStudents'];
-  public dataSource = ELEMENT_DATA;
 
   public get atLeastOneStudentFormGroupPresent(): boolean {
     return !!this.students && this.students.length > 0;
   }
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.createClassFormGroup = this.fb.group({
       className: [null, Validators.required],
-      students: this.fb.array([]),
+      students: this.fb.array([])
     });
   }
 
   public addNewStudent(): void {
-    this.students.push(this.fb.group({
-      firstName: [null, Validators.required],
-      lastName: [null, Validators.required]
-    }));
+    this.students.push(
+      this.fb.group({
+        firstName: [null, Validators.required],
+        lastName: [null, Validators.required]
+      })
+    );
   }
 
   public removeLastStudent(): void {
@@ -61,7 +58,7 @@ export class ManagementComponent implements OnInit {
 
   public createNewClass(): void {
     console.log('TODO: Erstelle neue Klasse...');
-    this.createClassRequestPerforming = true;
+    this.store.dispatch(new CreateSchoolClassRequest(this.classNameFormControl.value, this.students.value));
   }
 
   public get classNameFormControl(): FormControl {
