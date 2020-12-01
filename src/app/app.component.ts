@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { FormControl } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { LoginUser } from './shared/user/store/user.actions';
 
@@ -11,10 +10,6 @@ import { LoginUser } from './shared/user/store/user.actions';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Die LehrerHilfe';
-
-  currentSelectedClass = new FormControl('');
-
-  availableClasses: string[];
 
   mobileQuery: MediaQueryList;
 
@@ -27,7 +22,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.availableClasses = ['7a', '8b'];
     this.store.dispatch(new LoginUser('5f56574e-e17e-4a9a-a4b3-be0d16afcd2b', 'Julia', 'Teacher'));
   }
 

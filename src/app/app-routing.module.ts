@@ -5,14 +5,14 @@ const routes: Routes = [
   // Einstiegspunkt der App (Spaeter 'Login')
   {
     path: '',
-    loadChildren: () => import('./attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
+    loadChildren: () => import('./features/attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
   },
-  { path: 'management', loadChildren: () => import('./management/management.module').then(m => m.ManagementModule) },
+  { path: 'management', loadChildren: () => import('./features/management/management.module').then(m => m.ManagementModule) },
   {
     path: 'attendance-list',
-    loadChildren: () => import('./attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
+    loadChildren: () => import('./features/attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
   },
-  { path: 'grades-list', loadChildren: () => import('./grades-list/grades-list.module').then(m => m.GradesListModule) }
+  { path: 'grades-list', loadChildren: () => import('./features/grades-list/grades-list.module').then(m => m.GradesListModule) }
 ];
 
 @NgModule({

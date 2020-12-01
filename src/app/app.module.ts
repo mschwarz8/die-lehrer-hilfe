@@ -7,9 +7,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsModule } from '@ngxs/store';
 import { UserState } from './shared/user/store/user.state';
 import { environment } from '../environments/environment';
+import { ToolbarComponent } from './core/components/toolbar/toolbar.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ToolbarComponent],
   imports: [
     AppRoutingModule,
     SharedModule,

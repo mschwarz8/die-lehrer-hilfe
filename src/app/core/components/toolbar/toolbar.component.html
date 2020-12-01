@@ -1,0 +1,16 @@
+<!-- Toolbar -->
+<mat-toolbar>
+  <span>Die LehrerHilfe</span>
+  <span class="example-spacer"></span>
+  <mat-form-field style="font-size: 14px; padding-top: 8px; width: 80px">
+    <mat-label>Klasse...</mat-label>
+    <mat-select [formControl]="currentSelectedClass">
+      <mat-option *ngFor="let availableClass of availableClasses" [value]="availableClass">
+        {{ availableClass }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-icon-button class="example-icon" (click)="snav.toggle()" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+</mat-toolbar>
