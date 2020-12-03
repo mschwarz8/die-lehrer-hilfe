@@ -12,9 +12,9 @@ import { SchoolClass } from '../../shared/user/models/school-class';
   styleUrls: ['./management.component.scss']
 })
 export class ManagementComponent implements OnInit {
-  public createClassFormGroup: FormGroup | undefined;
+  public createNewSchoolClassFormGroup: FormGroup | undefined;
 
-  public createNewClassMode = false;
+  public createNewSchoolClassMode = false;
 
   @Select(UserState.getAvailableSchoolClasses)
   public availableSchoolClasses$: Observable<SchoolClass>;
@@ -31,7 +31,7 @@ export class ManagementComponent implements OnInit {
   constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
-    this.createClassFormGroup = this.fb.group({
+    this.createNewSchoolClassFormGroup = this.fb.group({
       className: [null, Validators.required],
       students: this.fb.array([])
     });
@@ -53,7 +53,7 @@ export class ManagementComponent implements OnInit {
   }
 
   public enterCreateNewClassMode(): void {
-    this.createNewClassMode = true;
+    this.createNewSchoolClassMode = true;
   }
 
   public createNewClass(): void {
@@ -62,10 +62,10 @@ export class ManagementComponent implements OnInit {
   }
 
   public get classNameFormControl(): FormControl {
-    return this.createClassFormGroup.get('className') as FormControl;
+    return this.createNewSchoolClassFormGroup.get('className') as FormControl;
   }
 
   public get students(): FormArray {
-    return this.createClassFormGroup.get('students') as FormArray;
+    return this.createNewSchoolClassFormGroup.get('students') as FormArray;
   }
 }

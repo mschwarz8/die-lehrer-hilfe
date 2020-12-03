@@ -24,8 +24,8 @@
   Neue Klasse erstellen
 </button>
 
-<ng-container *ngIf="createNewClassMode">
-  <form [formGroup]="createClassFormGroup">
+<ng-container *ngIf="createNewSchoolClassMode">
+  <form [formGroup]="createNewSchoolClassFormGroup">
     <mat-form-field class="form-field">
       <mat-label>Klassenname</mat-label>
       <input type="text" matInput formControlName="className" placeholder="Klassenname (z.B. '7a')" />
