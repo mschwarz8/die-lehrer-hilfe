@@ -7,6 +7,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Lesson } from './models/lesson';
 import { CreateLessonRequest } from '../../features/attendance-list/store/lesson.actions';
 import { LessonState } from '../../features/attendance-list/store/lesson.state';
+import { SchoolSubjectEnum } from '@/app/shared/user/models/school-subject-enum';
 
 export interface StudentLesson {
   externalId: string;
@@ -118,9 +119,12 @@ export class AttendanceListComponent implements OnInit {
   @Select(UserState.getSelectedSchoolClass)
   public selectedSchoolClass$: Observable<SchoolClass>;
 
+  @Select(UserState.getSelectedSchoolSubject)
+  public selectedSchoolSubject$: Observable<SchoolSubjectEnum>;
+
   datePickerFilter = (date: Date | null): boolean => {
     return this.lessonColumnDescriptions.indexOf(date.valueOf().toString()) === -1;
-  };
+  }
 
   constructor(private fb: FormBuilder, private store: Store) {}
 

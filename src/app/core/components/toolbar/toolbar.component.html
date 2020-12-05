@@ -2,11 +2,19 @@
 <mat-toolbar>
   <span>Die LehrerHilfe</span>
   <span class="example-spacer"></span>
-  <mat-form-field style="font-size: 14px; padding-top: 8px; width: 80px">
+  <mat-form-field style="font-size: 14px; padding-top: 8px; padding-right: 8px; width: 80px">
     <mat-label>Klasse...</mat-label>
-    <mat-select (valueChange)="selectClass($event)" [formControl]="schoolClassFormControl">
+    <mat-select (valueChange)="selectSchoolClass($event)" [formControl]="schoolClassFormControl">
       <mat-option *ngFor="let availableClass of availableSchoolClasses$ | async" [value]="availableClass">
         {{ availableClass.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field style="font-size: 14px; padding-top: 8px; width: 80px">
+    <mat-label>Fach...</mat-label>
+    <mat-select (valueChange)="selectSchoolSubject($event)" [formControl]="schoolSubjectFormControl">
+      <mat-option *ngFor="let schoolSubject of schoolClassFormControl.value.schoolSubjects" [value]="schoolSubject">
+        {{ schoolSubject }}
       </mat-option>
     </mat-select>
   </mat-form-field>

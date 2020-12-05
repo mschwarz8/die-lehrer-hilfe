@@ -7,7 +7,7 @@ import {
   CreateSchoolClassRequest,
   CreateSchoolClassSuccess,
   LoginUser,
-  SelectSchoolClass
+  SelectSchoolClass, SelectSchoolSubject
 } from './user.actions';
 import { User } from '../models/user';
 import { SchoolClassService } from '../../services/school-class/school-class.service';
@@ -18,6 +18,7 @@ import { SchoolSubjectEnum } from '../models/school-subject-enum';
 export const initialUserState: UserStateModel = {
   loggedInUser: null,
   selectedSchoolClass: null,
+  selectedSchoolSubject: null,
   availableSchoolClasses: [],
   createNewSchoolClassRequestLoading: false,
   createNewSchoolClassRequestError: null
@@ -40,6 +41,11 @@ export class UserState {
   @Selector()
   static getSelectedSchoolClass(state: UserStateModel): SchoolClass {
     return state.selectedSchoolClass;
+  }
+
+  @Selector()
+  static getSelectedSchoolSubject(state: UserStateModel): SchoolSubjectEnum {
+    return state.selectedSchoolSubject;
   }
 
   @Selector()
@@ -151,7 +157,18 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      selectedSchoolClass: action.selectedSchoolClass
+      selectedSchoolClass: action.selectedSchoolClass,
+      selectedSchoolSubject: null
+    });
+  }
+
+  @Action(SelectSchoolSubject)
+  executeSelectSchoolSubject(ctx: StateContext<UserStateModel>, action: SelectSchoolSubject): void {
+    console.log('executeSelectSchoolSubject');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      selectedSchoolSubject: action.selectedSchoolSubject
     });
   }
 

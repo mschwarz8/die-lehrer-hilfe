@@ -1,5 +1,6 @@
 import { Student } from '../models/student';
 import { SchoolClass } from '../models/school-class';
+import { SchoolSubjectEnum } from '../models/school-subject-enum';
 
 export class LoginUser {
   static readonly type = '[User] Login';
@@ -14,6 +15,11 @@ export class AvailableSchoolClassesFetchRequest {
 export class SelectSchoolClass {
   static readonly type = '[User] Select SchoolClass';
   constructor(public selectedSchoolClass: SchoolClass) {}
+}
+
+export class SelectSchoolSubject {
+  static readonly type = '[User] Select SchoolSubject';
+  constructor(public selectedSchoolSubject: SchoolSubjectEnum) {}
 }
 
 export class CreateSchoolClassRequest {

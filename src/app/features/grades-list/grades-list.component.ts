@@ -3,6 +3,7 @@ import { Select } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
 import { SchoolClass } from '../../shared/user/models/school-class';
+import { SchoolSubjectEnum } from '@/app/shared/user/models/school-subject-enum';
 
 export interface Exam {
   name: string;
@@ -110,6 +111,9 @@ export class GradesListComponent implements OnInit {
   @Select(UserState.getSelectedSchoolClass)
   public selectedSchoolClass$: Observable<SchoolClass>;
 
+  @Select(UserState.getSelectedSchoolSubject)
+  public selectedSchoolSubject$: Observable<SchoolSubjectEnum>;
+
   constructor() {}
 
   ngOnInit(): void {
@@ -137,7 +141,6 @@ export class GradesListComponent implements OnInit {
   public getTotalGrade(student: Student): number {
     let gradeSum = 0;
     let numberOfGrades = 0;
-    console.log(student.firstName + ' ' + student.lastName);
     for (const exam of student.exams) {
       const examIndex = EXAM_DATA.findIndex((examData) => examData.externalId === exam.externalId);
       if (examIndex !== -1 && !!exam.grade) {
@@ -149,8 +152,6 @@ export class GradesListComponent implements OnInit {
         numberOfGrades = numberOfGrades + gradeWeight;
         gradeSum = gradeSum + (exam.grade * gradeWeight);
       }
-      console.log(gradeSum);
-      console.log(numberOfGrades);
     }
     if (numberOfGrades === 0) {
       return 0;
