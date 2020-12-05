@@ -4,18 +4,20 @@ import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
+import { SchoolExamEnum } from '../../shared/user/models/school-exam-enum';
 
 export interface Exam {
   name: string;
-  type: string; // Ausfrage, Stegreifaufgabe, Schulaufgabe
+  type: SchoolExamEnum;
   externalId: string;
-  dateTimestampInMs: number;
+  dateTimestampInMs?: number; // For type QUESTIONING and COLLABORATION not needed
 }
 
 export interface StudentExam {
   externalId: string;
   tookPart: boolean;
   grade?: number;
+  dateTimestampInMs?: number;
 }
 
 export interface Student {
@@ -27,22 +29,39 @@ export interface Student {
 
 const EXAM_DATA: Exam[] = [
   {
+    name: 'Mitarbeitsnote',
+    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
+    externalId: '2b20693f-2e25-4351-8dca-610351270cb8'
+  },
+  {
     name: '1. Schulaufgabe',
-    type: 'Schulaufgabe',
+    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
     externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
     dateTimestampInMs: new Date(2020, 9, 14).valueOf()
   },
   {
     name: '1. Stegreifaufgabe',
-    type: 'Stegreifaufgabe',
+    type: SchoolExamEnum.IMPROMPTU_TASK,
     externalId: 'a353300a-b859-479d-b492-d18d24ae08b4',
     dateTimestampInMs: new Date(2020, 9, 20).valueOf()
   },
   {
     name: '2. Stegreifaufgabe',
-    type: 'Stegreifaufgabe',
+    type: SchoolExamEnum.IMPROMPTU_TASK,
     externalId: 'd12a30fe-efe5-4087-aef9-b60c9ad8e9f3',
     dateTimestampInMs: new Date(2020, 9, 22).valueOf()
+  },
+  {
+    name: '2. Schulaufgabe',
+    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
+    externalId: '83864a61-c13e-4488-847a-30089fd24692',
+    dateTimestampInMs: new Date(2020, 11, 2).valueOf()
+  },
+  {
+    name: '3. Stegreifaufgabe',
+    type: SchoolExamEnum.IMPROMPTU_TASK,
+    externalId: '99b4ffde-9458-4fb5-9527-6dea4dbfdd42',
+    dateTimestampInMs: new Date(2021, 1, 10).valueOf()
   }
 ];
 
@@ -89,6 +108,12 @@ const STUDENTS_DATA: Student[] = [
         externalId: 'a353300a-b859-479d-b492-d18d24ae08b4',
         tookPart: true,
         grade: 3
+      },
+      {
+        externalId: '2b20693f-2e25-4351-8dca-610351270cb8',
+        tookPart: true,
+        grade: 6,
+        dateTimestampInMs: new Date(2020, 10, 22).valueOf()
       }
     ]
   }
@@ -103,7 +128,7 @@ export class SchoolGradesListComponent implements OnInit {
   examColumnDescriptions: string[] = [];
 
   stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
-  dataSource = STUDENTS_DATA;
+  students = STUDENTS_DATA;
   examData = EXAM_DATA;
 
   totalColumnDescriptions: string[] = [];
@@ -119,7 +144,7 @@ export class SchoolGradesListComponent implements OnInit {
   ngOnInit(): void {
     const columnDescriptions: string[] = [];
     for (const exam of EXAM_DATA) {
-      if (!columnDescriptions.includes(exam.dateTimestampInMs.toString())) {
+      if (!columnDescriptions.includes(exam.externalId)) {
         columnDescriptions.push(exam.externalId);
       }
     }
@@ -130,8 +155,16 @@ export class SchoolGradesListComponent implements OnInit {
     this.totalColumnDescriptions.push('totalGrade');
   }
 
+  public getTooltipForStudentExam(student: Student, externalExamId: string): string {
+    const examIndex = student.exams.findIndex(examData => examData.externalId === externalExamId);
+    if (examIndex !== -1 && !!student.exams[examIndex].dateTimestampInMs) {
+      return new Date(student.exams[examIndex].dateTimestampInMs).toLocaleDateString();
+    }
+    return '';
+  }
+
   public getGradeForStudentExam(student: Student, externalExamId: string): string {
-    const examIndex = student.exams.findIndex((examData) => examData.externalId === externalExamId);
+    const examIndex = student.exams.findIndex(examData => examData.externalId === externalExamId);
     if (examIndex !== -1 && !!student.exams[examIndex].grade) {
       return student.exams[examIndex].grade.toString();
     }
@@ -142,15 +175,15 @@ export class SchoolGradesListComponent implements OnInit {
     let gradeSum = 0;
     let numberOfGrades = 0;
     for (const exam of student.exams) {
-      const examIndex = EXAM_DATA.findIndex((examData) => examData.externalId === exam.externalId);
+      const examIndex = EXAM_DATA.findIndex(examData => examData.externalId === exam.externalId);
       if (examIndex !== -1 && !!exam.grade) {
         const examObject = EXAM_DATA[examIndex];
         let gradeWeight = 1;
-        if ( examObject.type === 'Schulaufgabe') {
+        if (examObject.type === SchoolExamEnum.SCHOOL_ASSIGNMENT) {
           gradeWeight = 3;
         }
         numberOfGrades = numberOfGrades + gradeWeight;
-        gradeSum = gradeSum + (exam.grade * gradeWeight);
+        gradeSum = gradeSum + exam.grade * gradeWeight;
       }
     }
     if (numberOfGrades === 0) {

@@ -1,7 +1,9 @@
 <ng-container *ngIf="(selectedSchoolClass$ | async) && (selectedSchoolSubject$ | async); else noClassSelected">
-  <h2 class="component-header">Notenliste ({{ selectedSchoolSubject$ | async }} {{ (selectedSchoolClass$ | async).name }})</h2>
+  <h2 class="component-header">
+    Notenliste ({{ selectedSchoolSubject$ | async }} {{ (selectedSchoolClass$ | async).name }})
+  </h2>
   <div class="example-container mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
+    <table mat-table [dataSource]="students">
       <!-- FirstName Column -->
       <ng-container matColumnDef="firstName" sticky>
         <th mat-header-cell *matHeaderCellDef>Vorname</th>
@@ -16,7 +18,12 @@
 
       <ng-container *ngFor="let exam of examData" matColumnDef="{{ exam.externalId }}">
         <th mat-header-cell *matHeaderCellDef class="exam-column-header">{{ exam.name }}</th>
-        <td mat-cell *matCellDef="let student" class="exam-column-row">
+        <td
+          mat-cell
+          *matCellDef="let student"
+          class="exam-column-row"
+          [matTooltip]="getTooltipForStudentExam(student, exam.externalId)"
+        >
           {{ getGradeForStudentExam(student, exam.externalId) }}
         </td>
       </ng-container>
