@@ -7,7 +7,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Lesson } from './models/lesson';
 import { CreateLessonRequest } from '../../features/attendance-list/store/lesson.actions';
 import { LessonState } from '../../features/attendance-list/store/lesson.state';
-import { SchoolSubjectEnum } from '@/app/shared/user/models/school-subject-enum';
+import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
 
 export interface StudentLesson {
   externalId: string;

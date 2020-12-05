@@ -7,12 +7,19 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import('./features/attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
   },
-  { path: 'management', loadChildren: () => import('./features/management/management.module').then(m => m.ManagementModule) },
+  {
+    path: 'management',
+    loadChildren: () => import('./features/management/management.module').then(m => m.ManagementModule)
+  },
   {
     path: 'attendance-list',
     loadChildren: () => import('./features/attendance-list/attendance-list.module').then(m => m.AttendanceListModule)
   },
-  { path: 'grades-list', loadChildren: () => import('./features/grades-list/grades-list.module').then(m => m.GradesListModule) }
+  {
+    path: 'school-grades-list',
+    loadChildren: () =>
+      import('./features/school-grades-list/school-grades-list.module').then(m => m.SchoolGradesListModule)
+  }
 ];
 
 @NgModule({

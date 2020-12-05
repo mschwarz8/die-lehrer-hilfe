@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
 import { SchoolClass } from '../../shared/user/models/school-class';
-import { SchoolSubjectEnum } from '@/app/shared/user/models/school-subject-enum';
+import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
 
 export interface Exam {
   name: string;
@@ -95,11 +95,11 @@ const STUDENTS_DATA: Student[] = [
 ];
 
 @Component({
-  selector: 'app-grades-list',
-  templateUrl: './grades-list.component.html',
-  styleUrls: ['./grades-list.component.scss']
+  selector: 'app-school-grades-list',
+  templateUrl: './school-grades-list.component.html',
+  styleUrls: ['./school-grades-list.component.scss']
 })
-export class GradesListComponent implements OnInit {
+export class SchoolGradesListComponent implements OnInit {
   examColumnDescriptions: string[] = [];
 
   stickyColumnDescriptions: string[] = ['firstName', 'lastName'];

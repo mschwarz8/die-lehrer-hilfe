@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { GradesListComponent } from './grades-list.component';
+import { SchoolGradesListComponent } from './school-grades-list.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'overview',
-    component: GradesListComponent
+    component: SchoolGradesListComponent
   }
 ];
 
@@ -19,4 +19,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class GradesListRoutingModule { }
+export class SchoolGradesListRoutingModule { }
