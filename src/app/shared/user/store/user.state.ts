@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { UserStateModel } from './user.state.model';
 import {
-  AvailableSchoolClassesFetchRequest, CreateSchoolClassError,
+  AvailableSchoolClassesFetchRequest,
+  CreateSchoolClassError,
   CreateSchoolClassRequest,
   CreateSchoolClassSuccess,
   LoginUser,
@@ -12,6 +13,7 @@ import { User } from '../models/user';
 import { SchoolClassService } from '../../services/school-class/school-class.service';
 import { SchoolClass } from '../models/school-class';
 import produce from 'immer';
+import { SchoolSubjectEnum } from '../models/school-subject-enum';
 
 export const initialUserState: UserStateModel = {
   loggedInUser: null,
@@ -84,12 +86,60 @@ export class UserState {
         {
           externalId: '8ef72fda-fe14-4220-a3c2-71f68405c6ae',
           name: '7a',
-          students: []
+          students: [
+            {
+              externalId: 'bc0b4b9e-76c1-4ae0-9969-2b053f3fd3b9',
+              firstName: 'Hans1',
+              lastName: 'Wurst1'
+            },
+            {
+              externalId: '242d356e-a224-4ebb-adcc-9f47745bf540',
+              firstName: 'Hans2',
+              lastName: 'Wurst2'
+            },
+            {
+              externalId: '0310fc7c-a5b5-452e-85ef-b0bc7125ef90',
+              firstName: 'Hans3',
+              lastName: 'Wurst3'
+            },
+            {
+              externalId: 'efe0fe51-0ab1-4fdc-a6f9-4c062f9172f7',
+              firstName: 'Hans5',
+              lastName: 'Wurst5'
+            },
+            {
+              externalId: '1a7503a8-f1bc-4ec5-9aa3-7add73dfa8af',
+              firstName: 'Hans6',
+              lastName: 'Wurst6'
+            },
+            {
+              externalId: '545cdf41-3b0a-4f23-82a9-3a490f7375dd',
+              firstName: 'Hans7',
+              lastName: 'Wurst7'
+            },
+            {
+              externalId: 'aa9e3036-d83f-4c12-9f00-95bb2b2b8951',
+              firstName: 'Hans8',
+              lastName: 'Wurst8'
+            },
+            {
+              externalId: '792922c1-a167-49c6-a0b4-ad3b3aaad63f',
+              firstName: 'Hans9',
+              lastName: 'Wurst9'
+            },
+            {
+              externalId: 'b36e6e50-f731-4c68-a3dd-84f00abceb48',
+              firstName: 'Hans10',
+              lastName: 'Wurst10'
+            }
+          ],
+          schoolSubjects: [SchoolSubjectEnum.MATHE, SchoolSubjectEnum.SPORT]
         },
         {
           externalId: '5eb5d76a-bb29-4419-83c3-ab87226886fc',
           name: '8b',
-          students: []
+          students: [],
+          schoolSubjects: [SchoolSubjectEnum.MATHE]
         }
       ]
     });
@@ -115,18 +165,20 @@ export class UserState {
       createNewSchoolClassRequestError: null
     });
     this.schoolClassService.createNewSchoolClass(action.schoolClassname, action.students);
-    ctx.dispatch(new CreateSchoolClassSuccess({
-      externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
-      name: action.schoolClassname,
-      students: action.students
-    }));
+    ctx.dispatch(
+      new CreateSchoolClassSuccess({
+        externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
+        name: action.schoolClassname,
+        students: action.students
+      })
+    );
   }
 
   @Action(CreateSchoolClassSuccess)
   executeCreateSchoolClassSuccess(ctx: StateContext<UserStateModel>, action: CreateSchoolClassSuccess): void {
     console.log('executeCreateSchoolClassSuccess');
     const state = ctx.getState();
-    const updatedAvailableSchoolClasses = produce(state.availableSchoolClasses, (draftAvailableSchoolClasses) => {
+    const updatedAvailableSchoolClasses = produce(state.availableSchoolClasses, draftAvailableSchoolClasses => {
       draftAvailableSchoolClasses.push(action.schoolClass);
     });
     ctx.setState({

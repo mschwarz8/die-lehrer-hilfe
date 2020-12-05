@@ -5,3 +5,30 @@ table {
 .form-field {
   width: 20%;
 }
+
+// Expandable rows
+tr.school-class-details-row {
+  height: 0;
+}
+
+tr.school-class-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.school-class-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.school-class-row td {
+  border-bottom-width: 0;
+}
+
+.school-class-details-container {
+  overflow: hidden;
+  display: flex;
+}
+
+.action-column {
+  width: 24px;
+  padding: 4px !important;
+}

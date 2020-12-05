@@ -1,8 +1,10 @@
 import { Student } from './student';
+import { SchoolSubjectEnum } from './school-subject-enum';
 
 export interface SchoolClass {
   externalId: string;
   name: string;
-  grade?: number;
+  schoolLevel?: number;
   students: Student[];
+  schoolSubjects?: SchoolSubjectEnum[];
 }
