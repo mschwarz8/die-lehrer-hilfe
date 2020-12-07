@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Neues Fach für Klasse {{ data.schoolClass.name }}</h1>
+<div mat-dialog-content>
+  <mat-form-field style="font-size: 14px; padding-top: 8px; width: 80px">
+    <mat-label>Fach...</mat-label>
+    <mat-select [formControl]="schoolSubjectFormControl">
+      <mat-option *ngFor="let schoolSubject of creatableSchoolSubjects" [value]="schoolSubject">
+        {{ schoolSubject }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button (click)="onOkClick()" cdkFocusInitial [disabled]="!schoolSubjectFormControl.value">Ok</button>
+</div>

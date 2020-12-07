@@ -19,9 +19,22 @@
   <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
   <ng-container matColumnDef="schoolClassDetails">
     <td mat-cell *matCellDef="let schoolClass" [attr.colspan]="displayedColumns.length">
-      <div class="school-class-details-container"
-           [@expandDetails]="schoolClass == expandedSchoolClass ? 'expanded' : 'collapsed'">
-        <div>Diese Klasse hat {{schoolClass.schoolSubjects ? schoolClass.schoolSubjects.length : '0'}} Fächer</div>
+      <div
+        class="school-class-details-container"
+        [@expandDetails]="schoolClass == expandedSchoolClass ? 'expanded' : 'collapsed'"
+      >
+        <ng-container
+          *ngIf="!!schoolClass.schoolSubjects && schoolClass.schoolSubjects.length > 0; else noSchoolSubjects"
+        >
+          <ng-container *ngFor="let schoolSubject of schoolClass.schoolSubjects">
+            <div fxLayout="row" fxLayoutWrap fxLayoutGap="2%" class="school-subject-row">
+              {{ schoolSubject }}
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #noSchoolSubjects>
+          <div>Noch keine Fach für Klasse {{ schoolClass.name }} angelegt.</div>
+        </ng-template>
       </div>
     </td>
   </ng-container>
@@ -35,11 +48,13 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let schoolClass; columns: displayedColumns;"
-      class="school-class-row"
-      [class.example-expanded-row]="expandedSchoolClass === schoolClass"
-      (click)="expandedSchoolClass = expandedSchoolClass === schoolClass ? null : schoolClass">
-  </tr>
+  <tr
+    mat-row
+    *matRowDef="let schoolClass; columns: displayedColumns"
+    class="school-class-row"
+    [class.example-expanded-row]="expandedSchoolClass === schoolClass"
+    (click)="expandedSchoolClass = expandedSchoolClass === schoolClass ? null : schoolClass"
+  ></tr>
   <tr mat-row *matRowDef="let row; columns: ['schoolClassDetails']" class="school-class-details-row"></tr>
 </table>
 
@@ -62,14 +77,7 @@
       <mat-label fxLayout="row" style="padding-top: 16px">Schüler</mat-label>
       <div *ngFor="let studentFormGroup of students.controls">
         <form [formGroup]="studentFormGroup">
-          <div
-            class="container"
-            fxLayout="row"
-            fxLayout.xs="column"
-            fxLayoutWrap
-            fxLayoutGap="2%"
-            fxLayoutAlign="center"
-          >
+          <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="2%" fxLayoutAlign="center">
             <div fxLayout="column" fxFlex="50%">
               <mat-form-field>
                 <input type="text" matInput formControlName="firstName" placeholder="Vorname (z.B. 'Max')" />

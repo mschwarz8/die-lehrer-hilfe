@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { UserStateModel } from './user.state.model';
 import {
+  AddSchoolSubjectError,
+  AddSchoolSubjectRequest, AddSchoolSubjectSuccess,
   AvailableSchoolClassesFetchRequest,
   CreateSchoolClassError,
   CreateSchoolClassRequest,
@@ -21,7 +23,9 @@ export const initialUserState: UserStateModel = {
   selectedSchoolSubject: null,
   availableSchoolClasses: [],
   createNewSchoolClassRequestLoading: false,
-  createNewSchoolClassRequestError: null
+  createNewSchoolClassRequestError: null,
+  addSchoolSubjectToSchoolClassLoading: false,
+  addSchoolSubjectToSchoolClassError: null
 };
 
 @State<UserStateModel>({
@@ -214,6 +218,56 @@ export class UserState {
       ...state,
       createNewSchoolClassRequestLoading: false,
       createNewSchoolClassRequestError: action.error
+    });
+  }
+
+  @Action(AddSchoolSubjectRequest)
+  executeAddSchoolSubjectRequest(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectRequest): void {
+    console.log('executeAddSchoolSubjectRequest');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addSchoolSubjectToSchoolClassLoading: true,
+      addSchoolSubjectToSchoolClassError: null
+    });
+    this.schoolClassService.addSchoolSubjectToSchoolClass(action.externalSchoolClassId, action.schoolSubject);
+    let updatedSchoolClass: SchoolClass;
+    const updatedAvailableSchoolClasses = produce(state.availableSchoolClasses, draftAvailableSchoolClasses => {
+      for (const schoolClass of draftAvailableSchoolClasses) {
+        if (schoolClass.externalId === action.externalSchoolClassId) {
+          schoolClass.schoolSubjects.push(action.schoolSubject);
+          updatedSchoolClass = schoolClass;
+        }
+      }
+    });
+    ctx.setState({
+      ...state,
+      availableSchoolClasses: updatedAvailableSchoolClasses
+    });
+    ctx.dispatch(
+      new AddSchoolSubjectSuccess(updatedSchoolClass)
+    );
+  }
+
+  @Action(AddSchoolSubjectSuccess)
+  addSchoolSubjectSuccess(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectSuccess): void {
+    console.log('addSchoolSubjectSuccess');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addSchoolSubjectToSchoolClassLoading: false,
+      addSchoolSubjectToSchoolClassError: null
+    });
+  }
+
+  @Action(AddSchoolSubjectError)
+  addSchoolSubjectError(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectError): void {
+    console.log('addSchoolSubjectError');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addSchoolSubjectToSchoolClassLoading: false,
+      addSchoolSubjectToSchoolClassError: action.error
     });
   }
 }

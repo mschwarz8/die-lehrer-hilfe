@@ -25,10 +25,14 @@ tr.school-class-row:not(.example-expanded-row):active {
 
 .school-class-details-container {
   overflow: hidden;
-  display: flex;
 }
 
 .action-column {
   width: 24px;
   padding: 4px !important;
+}
+
+.school-subject-row {
+  height: 32px;
+  padding: 4px;
 }

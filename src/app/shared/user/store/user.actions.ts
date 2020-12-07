@@ -36,3 +36,18 @@ export class CreateSchoolClassError {
   static readonly type = '[User] Create SchoolClass Error';
   constructor(public error: string) {}
 }
+
+export class AddSchoolSubjectRequest {
+  static readonly type = '[User] Add SchoolSubject Request';
+  constructor(public externalSchoolClassId: string, public schoolSubject: SchoolSubjectEnum) {}
+}
+
+export class AddSchoolSubjectSuccess {
+  static readonly type = '[User] Add SchoolSubject Success';
+  constructor(public schoolClass: SchoolClass) {}
+}
+
+export class AddSchoolSubjectError {
+  static readonly type = '[User] Add SchoolSubject Error';
+  constructor(public error: string) {}
+}

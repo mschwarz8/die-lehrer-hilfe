@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { CreateSchoolClassRequest } from '../../shared/user/store/user.actions';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { MatDialog } from '@angular/material/dialog';
+import { AddSchoolSubjectDialogComponent } from './add-school-subject-dialog/add-school-subject-dialog.component';
 
 @Component({
   selector: 'app-management',
@@ -13,10 +15,10 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   styleUrls: ['./management.component.scss'],
   animations: [
     trigger('expandDetails', [
-      state('collapsed', style({height: '0px', minHeight: '0'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'))
+    ])
   ]
 })
 export class ManagementComponent implements OnInit {
@@ -38,7 +40,7 @@ export class ManagementComponent implements OnInit {
     return !!this.students && this.students.length > 0;
   }
 
-  constructor(private fb: FormBuilder, private store: Store) {}
+  constructor(private fb: FormBuilder, private store: Store, public matDialog: MatDialog) {}
 
   ngOnInit(): void {
     this.createNewSchoolClassFormGroup = this.fb.group({
@@ -73,6 +75,14 @@ export class ManagementComponent implements OnInit {
 
   public actionButtonClicked(schoolClass: SchoolClass): void {
     console.log(schoolClass.name);
+    const dialogRef = this.matDialog.open(AddSchoolSubjectDialogComponent, {
+      width: '250px',
+      data: { schoolClass }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 
   public get classNameFormControl(): FormControl {

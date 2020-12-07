@@ -9,6 +9,12 @@ export interface UserStateModel {
 
   // AvailableSchoolClasses
   availableSchoolClasses: SchoolClass[];
+
+  // Create new SchoolClass
   createNewSchoolClassRequestLoading: boolean;
   createNewSchoolClassRequestError: string;
+
+  // Add SchoolSubject to SchoolClass
+  addSchoolSubjectToSchoolClassLoading: boolean;
+  addSchoolSubjectToSchoolClassError: string;
 }
