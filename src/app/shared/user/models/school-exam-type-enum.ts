@@ -1,4 +1,4 @@
-export enum SchoolExamEnum {
+export enum SchoolExamTypeEnum {
   QUESTIONING = 'Ausfrage',
   IMPROMPTU_TASK = 'Stegreifaufgabe',
   SCHOOL_ASSIGNMENT = 'Schulaufgabe',

@@ -151,7 +151,16 @@ export class UserState {
           students: [],
           schoolSubjects: [SchoolSubjectEnum.MATHE]
         }
-      ]
+      ],
+      // For debugging selecting the first schoolClass
+      selectedSchoolClass: {
+        externalId: '5eb5d76a-bb29-4419-83c3-ab87226886fc',
+        name: '8b',
+        students: [],
+        schoolSubjects: [SchoolSubjectEnum.MATHE]
+      },
+      // For debugging selecting the first schoolSubject
+      selectedSchoolSubject: SchoolSubjectEnum.MATHE
     });
   }
 

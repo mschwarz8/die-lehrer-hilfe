@@ -37,6 +37,59 @@
       <tr mat-row *matRowDef="let row; columns: totalColumnDescriptions"></tr>
     </table>
   </div>
+
+  <button mat-raised-button color="primary" style="margin: 16px 0" (click)="enterAddNewGradeMode()">
+    Neue Bewertung hinzufügen
+  </button>
+
+  <ng-container *ngIf="addNewGradeMode">
+    <form [formGroup]="addNewGradeFormGroup">
+      <mat-form-field fxLayout="row" style="font-size: 14px; padding-top: 8px; width: 80px">
+        <mat-label>Name...</mat-label>
+        <input type="text" matInput formControlName="gradeName" placeholder="Name (z.B. '1. Schulaufgabe')" />
+        <mat-error *ngIf="addNewGradeNameFormControl.hasError('required')">
+          Name ist notwendig um eine Bewertung zu erstellen.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxLayout="row" style="font-size: 14px; padding-top: 8px; width: 80px">
+        <mat-label>Typ...</mat-label>
+        <mat-select formControlName="gradeType">
+          <mat-option *ngFor="let schoolExamType of schoolExamTypes" [value]="schoolExamType">
+            {{ schoolExamType }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fxLayout="row" style="padding-right: 16px">
+        <mat-label>Choose a date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="gradeDate"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        [disabled]="addNewGradeButtonDisabled()"
+        mat-raised-button
+        color="primary"
+        style="margin: 16px 0"
+        (click)="addNewGrade()"
+      >
+        <div fxLayout="row" fxLayoutGap="5%">
+          <div fxLayout="column">
+            <mat-spinner
+              diameter="18"
+              *ngIf="false"
+              style="margin: auto 0 !important;"
+            ></mat-spinner>
+          </div>
+          <div fxLayout="column">Füge Bewertung hinzu</div>
+        </div>
+      </button>
+    </form>
+  </ng-container>
 </ng-container>
 <ng-template #noClassSelected>
   <h2 class="component-header">Notenliste</h2>

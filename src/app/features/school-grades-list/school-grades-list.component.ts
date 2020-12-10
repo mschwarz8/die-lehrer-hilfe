@@ -4,11 +4,12 @@ import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
-import { SchoolExamEnum } from '../../shared/user/models/school-exam-enum';
+import { SchoolExamTypeEnum } from '../../shared/user/models/school-exam-type-enum';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 export interface Exam {
   name: string;
-  type: SchoolExamEnum;
+  type: SchoolExamTypeEnum;
   externalId: string;
   dateTimestampInMs?: number; // For type QUESTIONING and COLLABORATION not needed
 }
@@ -30,36 +31,36 @@ export interface Student {
 const EXAM_DATA: Exam[] = [
   {
     name: 'Mitarbeitsnote',
-    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
+    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
     externalId: '2b20693f-2e25-4351-8dca-610351270cb8'
   },
   {
     name: '1. Schulaufgabe',
-    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
+    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
     externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
     dateTimestampInMs: new Date(2020, 9, 14).valueOf()
   },
   {
     name: '1. Stegreifaufgabe',
-    type: SchoolExamEnum.IMPROMPTU_TASK,
+    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
     externalId: 'a353300a-b859-479d-b492-d18d24ae08b4',
     dateTimestampInMs: new Date(2020, 9, 20).valueOf()
   },
   {
     name: '2. Stegreifaufgabe',
-    type: SchoolExamEnum.IMPROMPTU_TASK,
+    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
     externalId: 'd12a30fe-efe5-4087-aef9-b60c9ad8e9f3',
     dateTimestampInMs: new Date(2020, 9, 22).valueOf()
   },
   {
     name: '2. Schulaufgabe',
-    type: SchoolExamEnum.SCHOOL_ASSIGNMENT,
+    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
     externalId: '83864a61-c13e-4488-847a-30089fd24692',
     dateTimestampInMs: new Date(2020, 11, 2).valueOf()
   },
   {
     name: '3. Stegreifaufgabe',
-    type: SchoolExamEnum.IMPROMPTU_TASK,
+    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
     externalId: '99b4ffde-9458-4fb5-9527-6dea4dbfdd42',
     dateTimestampInMs: new Date(2021, 1, 10).valueOf()
   }
@@ -125,6 +126,8 @@ const STUDENTS_DATA: Student[] = [
   styleUrls: ['./school-grades-list.component.scss']
 })
 export class SchoolGradesListComponent implements OnInit {
+  public addNewGradeFormGroup: FormGroup | undefined;
+
   examColumnDescriptions: string[] = [];
 
   stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
@@ -133,13 +136,17 @@ export class SchoolGradesListComponent implements OnInit {
 
   totalColumnDescriptions: string[] = [];
 
+  schoolExamTypes: SchoolExamTypeEnum[] = Object.values(SchoolExamTypeEnum);
+
   @Select(UserState.getSelectedSchoolClass)
   public selectedSchoolClass$: Observable<SchoolClass>;
 
   @Select(UserState.getSelectedSchoolSubject)
   public selectedSchoolSubject$: Observable<SchoolSubjectEnum>;
 
-  constructor() {}
+  addNewGradeMode = false;
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     const columnDescriptions: string[] = [];
@@ -153,6 +160,12 @@ export class SchoolGradesListComponent implements OnInit {
     this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.examColumnDescriptions);
 
     this.totalColumnDescriptions.push('totalGrade');
+
+    this.addNewGradeFormGroup = this.fb.group({
+      gradeName: [null, Validators.required],
+      gradeType: [null, Validators.required],
+      gradeDate: new Date()
+    });
   }
 
   public getTooltipForStudentExam(student: Student, externalExamId: string): string {
@@ -179,7 +192,7 @@ export class SchoolGradesListComponent implements OnInit {
       if (examIndex !== -1 && !!exam.grade) {
         const examObject = EXAM_DATA[examIndex];
         let gradeWeight = 1;
-        if (examObject.type === SchoolExamEnum.SCHOOL_ASSIGNMENT) {
+        if (examObject.type === SchoolExamTypeEnum.SCHOOL_ASSIGNMENT) {
           gradeWeight = 3;
         }
         numberOfGrades = numberOfGrades + gradeWeight;
@@ -190,5 +203,36 @@ export class SchoolGradesListComponent implements OnInit {
       return 0;
     }
     return gradeSum / numberOfGrades;
+  }
+
+  public enterAddNewGradeMode(): void {
+    this.addNewGradeMode = true;
+  }
+
+  public addNewGrade(): void {
+    console.log('Should add new grade here...');
+    console.log(this.addNewGradeNameFormControl.value);
+    console.log(this.addNewGradeTypeFormControl.value);
+    console.log(this.addNewGradeDateFormControl.value);
+  }
+
+  public addNewGradeButtonDisabled(): boolean {
+    return (
+      !this.addNewGradeNameFormControl.valid ||
+      !this.addNewGradeTypeFormControl.valid ||
+      !this.addNewGradeDateFormControl.valid
+    );
+  }
+
+  public get addNewGradeNameFormControl(): FormControl {
+    return this.addNewGradeFormGroup.get('gradeName') as FormControl;
+  }
+
+  public get addNewGradeTypeFormControl(): FormControl {
+    return this.addNewGradeFormGroup.get('gradeType') as FormControl;
+  }
+
+  public get addNewGradeDateFormControl(): FormControl {
+    return this.addNewGradeFormGroup.get('gradeDate') as FormControl;
   }
 }
