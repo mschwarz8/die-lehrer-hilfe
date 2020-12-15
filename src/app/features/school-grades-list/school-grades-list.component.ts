@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
 import { SchoolExamTypeEnum } from '../../shared/user/models/school-exam-type-enum';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { User } from '../../shared/user/models/user';
+import { SchoolExamsFetchRequest } from './store/school-exam.actions';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 export interface Exam {
   name: string;
@@ -138,6 +141,9 @@ export class SchoolGradesListComponent implements OnInit {
 
   schoolExamTypes: SchoolExamTypeEnum[] = Object.values(SchoolExamTypeEnum);
 
+  @Select(UserState.getLoggedInUser)
+  public loggedInUser$: Observable<User>;
+
   @Select(UserState.getSelectedSchoolClass)
   public selectedSchoolClass$: Observable<SchoolClass>;
 
@@ -146,7 +152,7 @@ export class SchoolGradesListComponent implements OnInit {
 
   addNewGradeMode = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     const columnDescriptions: string[] = [];
@@ -166,6 +172,16 @@ export class SchoolGradesListComponent implements OnInit {
       gradeType: [null, Validators.required],
       gradeDate: new Date()
     });
+
+    combineLatest([this.loggedInUser$, this.selectedSchoolClass$, this.selectedSchoolSubject$])
+      .pipe(distinctUntilChanged())
+      .subscribe(([loggedInUser, selectedSchoolClass, selectedSchoolSubject]) => {
+        if (!!loggedInUser && !!selectedSchoolClass && !!selectedSchoolSubject) {
+          this.store.dispatch(
+            new SchoolExamsFetchRequest(loggedInUser.externalId, selectedSchoolClass.externalId, selectedSchoolSubject)
+          );
+        }
+      });
   }
 
   public getTooltipForStudentExam(student: Student, externalExamId: string): string {
