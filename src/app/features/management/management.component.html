@@ -45,7 +45,7 @@
     <td mat-cell *matCellDef="let schoolClass" class="action-column">
       <button mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
       <mat-menu #menu="matMenu">
-        <button (click)="addSchoolSubject(schoolClass)" mat-menu-item>Neues Fach +</button>
+        <button (click)="addSchoolSubject(schoolClass)" mat-menu-item>+ Neues Fach</button>
         <button (click)="editClass(schoolClass)" mat-menu-item>Editiere Klasse</button>
       </mat-menu>
     </td>
