@@ -28,8 +28,6 @@ export class AttendanceListComponent implements OnInit {
 
   public stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
 
-  public lessonColumnDescriptions: string[] = [];
-
   public totalColumnDescriptions: string[] = [];
 
   @Select(LessonState.getLessons)
@@ -47,8 +45,8 @@ export class AttendanceListComponent implements OnInit {
   @Select(UserState.getSelectedSchoolSubject)
   public selectedSchoolSubject$: Observable<SchoolSubjectEnum>;
 
-  public datePickerFilter = (date: Date | null): boolean => {
-    return this.lessonColumnDescriptions.indexOf(date.valueOf().toString()) === -1;
+  public isDateDisabledFilter = (date: Date | null): boolean => {
+    return this.lessons.map(lesson => lesson.dateTimestampInMs).indexOf(date.valueOf()) === -1;
   }
 
   constructor(private fb: FormBuilder, private store: Store) {}
@@ -63,10 +61,10 @@ export class AttendanceListComponent implements OnInit {
         return;
       }
       this.lessons = lessons;
-      this.lessonColumnDescriptions = lessons.map(lesson => lesson.dateTimestampInMs.toString());
+      const lessonColumnDescriptions = lessons.map(lesson => lesson.dateTimestampInMs.toString());
       // Sort by date
-      this.lessonColumnDescriptions.sort((a, b) => (+a < +b ? -1 : 0));
-      this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
+      lessonColumnDescriptions.sort((a, b) => (+a < +b ? -1 : 0));
+      this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(lessonColumnDescriptions);
     });
 
     combineLatest([this.loggedInUser$, this.selectedSchoolClass$, this.selectedSchoolSubject$])
@@ -103,7 +101,7 @@ export class AttendanceListComponent implements OnInit {
   }
 
   public lessonAlreadyPresent(): boolean {
-    return this.lessonColumnDescriptions.indexOf(this.lessonDateFormControl.value.valueOf().toString()) !== -1;
+    return !this.isDateDisabledFilter(new Date(this.lessonDateFormControl.value.valueOf()));
   }
 
   public createNewLesson(): void {
