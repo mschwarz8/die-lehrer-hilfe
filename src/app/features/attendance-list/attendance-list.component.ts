@@ -22,6 +22,8 @@ export class AttendanceListComponent implements OnInit {
 
   public createNewLessonMode = false;
 
+  public selectedLessonDescription: string;
+
   public lessons: Lesson[];
 
   public stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
@@ -111,6 +113,19 @@ export class AttendanceListComponent implements OnInit {
 
   public getDateStringFromTimestamp(timestampInMsAsString: string): string {
     return new Date(+timestampInMsAsString).toLocaleDateString();
+  }
+
+  public clickedOnHeader(lessonDescription: string): void {
+    console.log('clicked on ' + lessonDescription);
+    if (this.isColumnSelected(lessonDescription)) {
+      this.selectedLessonDescription = null;
+    } else {
+      this.selectedLessonDescription = lessonDescription;
+    }
+  }
+
+  public isColumnSelected(lessonDescription: string): boolean {
+    return this.selectedLessonDescription === lessonDescription;
   }
 
   public get lessonDateFormControl(): FormControl {

@@ -15,11 +15,20 @@ table {
   width: 100%;
 }
 
+.selected-column {
+  background-color: rgba(63, 81, 181, 0.25);
+}
+
+.not-selected-column {
+  background-color: initial;
+}
+
 .form-field {
   width: 20%;
 }
 
 .lesson-column-header {
+  cursor: pointer;
   text-align: center !important;
 }
 
