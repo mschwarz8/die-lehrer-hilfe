@@ -3,7 +3,7 @@
     Anwesenheitsliste ({{ selectedSchoolSubject$ | async }} {{ (selectedSchoolClass$ | async).name }})
   </h2>
   <div class="example-container mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
+    <table mat-table [dataSource]="(selectedSchoolClass$ | async).students">
       <!-- FirstName Column -->
       <ng-container matColumnDef="firstName" sticky>
         <th mat-header-cell *matHeaderCellDef>Vorname</th>

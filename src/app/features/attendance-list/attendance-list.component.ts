@@ -1,97 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Lesson } from './models/lesson';
-import { CreateLessonRequest } from '../../features/attendance-list/store/lesson.actions';
+import { CreateLessonRequest, LessonsFetchRequest } from '../../features/attendance-list/store/lesson.actions';
 import { LessonState } from '../../features/attendance-list/store/lesson.state';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
-
-export interface StudentLesson {
-  externalId: string;
-  tookPart: boolean;
-  note?: string;
-}
-
-export interface Student {
-  externalId: string;
-  firstName: string;
-  lastName: string;
-  lessons: StudentLesson[];
-}
-
-const LESSONS_DATA: Lesson[] = [
-  {
-    externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
-    dateTimestampInMs: new Date(2020, 9, 14).valueOf()
-  },
-  {
-    externalId: 'd3123a32-daa8-40e9-a21a-6af302399966',
-    dateTimestampInMs: new Date(2020, 9, 15).valueOf()
-  }
-];
-
-const STUDENTS_DATA: Student[] = [
-  {
-    externalId: 'fc2a7d80-7a39-4579-a91f-d8816f5af075',
-    firstName: 'Hans',
-    lastName: 'Maier',
-    lessons: [
-      {
-        externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
-        tookPart: true,
-        note: 'Hat Unterricht massiv gestört'
-      },
-      {
-        externalId: 'd3123a32-daa8-40e9-a21a-6af302399966',
-        tookPart: false,
-        note: 'War entschuldigt'
-      }
-    ]
-  },
-  {
-    externalId: 'bed0845c-31f3-46c4-81b3-0b5e71506d0e',
-    firstName: 'Max',
-    lastName: 'Bratwurst',
-    lessons: [
-      {
-        externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
-        tookPart: true,
-        note: 'Was an idiot!'
-      },
-      {
-        externalId: 'd3123a32-daa8-40e9-a21a-6af302399966',
-        tookPart: true
-      }
-    ]
-  },
-  {
-    externalId: '30682fab-daee-48f3-8395-6d820385bf59',
-    firstName: 'Marry',
-    lastName: 'VeryLongNameThatWontFit',
-    lessons: [
-      {
-        externalId: 'd3123a32-daa8-40e9-a21a-6af302399966',
-        tookPart: true
-      }
-    ]
-  }
-];
-
-const FIXED_LESSON_COLUMN_DESCRIPTIONS: string[] = [
-  new Date(2020, 10, 13).valueOf().toString(),
-  new Date(2020, 10, 14).valueOf().toString(),
-  new Date(2020, 10, 15).valueOf().toString(),
-  new Date(2020, 10, 16).valueOf().toString(),
-  new Date(2020, 10, 17).valueOf().toString(),
-  new Date(2020, 10, 18).valueOf().toString(),
-  new Date(2020, 10, 19).valueOf().toString(),
-  new Date(2020, 10, 20).valueOf().toString(),
-  new Date(2020, 10, 21).valueOf().toString(),
-  new Date(2020, 10, 22).valueOf().toString()
-];
+import { User } from '../../shared/user/models/user';
+import { distinctUntilChanged } from 'rxjs/operators';
+import { Student } from '../../shared/user/models/student';
 
 @Component({
   selector: 'app-attendance-list',
@@ -101,9 +20,11 @@ const FIXED_LESSON_COLUMN_DESCRIPTIONS: string[] = [
 export class AttendanceListComponent implements OnInit {
   public createNewLessonFormGroup: FormGroup | undefined;
 
-  lessonColumnDescriptions: string[] = FIXED_LESSON_COLUMN_DESCRIPTIONS;
+  lessonColumnDescriptions: string[] = [];
 
   createNewLessonMode = false;
+
+  public lessons: Lesson[];
 
   @Select(LessonState.getLessons)
   public lessons$: Observable<Lesson[]>;
@@ -112,9 +33,11 @@ export class AttendanceListComponent implements OnInit {
   public createNewLessonRequestLoading$: Observable<boolean>;
 
   stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
-  dataSource = STUDENTS_DATA;
 
   totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
+
+  @Select(UserState.getLoggedInUser)
+  public loggedInUser$: Observable<User>;
 
   @Select(UserState.getSelectedSchoolClass)
   public selectedSchoolClass$: Observable<SchoolClass>;
@@ -133,13 +56,6 @@ export class AttendanceListComponent implements OnInit {
       lessonDate: [new Date(), Validators.required]
     });
 
-    const columnDescriptions: string[] = [];
-    for (const lesson of LESSONS_DATA) {
-      if (!columnDescriptions.includes(lesson.dateTimestampInMs.toString())) {
-        columnDescriptions.push(lesson.dateTimestampInMs.toString());
-      }
-    }
-    this.lessonColumnDescriptions = this.lessonColumnDescriptions.concat(columnDescriptions);
     // Sort by date
     this.lessonColumnDescriptions.sort((a, b) => (+a < +b ? -1 : 0));
 
@@ -149,27 +65,37 @@ export class AttendanceListComponent implements OnInit {
       if (!lessons || lessons.length === 0) {
         return;
       }
-      const lessonsColumnDescriptions = lessons.map(lesson => lesson.dateTimestampInMs.toString());
-      this.lessonColumnDescriptions = FIXED_LESSON_COLUMN_DESCRIPTIONS.concat(lessonsColumnDescriptions);
+      this.lessons = lessons;
+      this.lessonColumnDescriptions = lessons.map(lesson => lesson.dateTimestampInMs.toString());
       // Sort by date
       this.lessonColumnDescriptions.sort((a, b) => (+a < +b ? -1 : 0));
       this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
     });
+
+    combineLatest([this.loggedInUser$, this.selectedSchoolClass$, this.selectedSchoolSubject$])
+      .pipe(distinctUntilChanged())
+      .subscribe(([loggedInUser, selectedSchoolClass, selectedSchoolSubject]) => {
+        if (!!loggedInUser && !!selectedSchoolClass && !!selectedSchoolSubject) {
+          this.store.dispatch(
+            new LessonsFetchRequest(loggedInUser.externalId, selectedSchoolClass.externalId, selectedSchoolSubject)
+          );
+        }
+      });
   }
 
   public hasStudentAttendedLessons(student: Student, lessonDescription: string): boolean {
-    let foundLesson = null;
-    for (const lesson of LESSONS_DATA) {
+    let foundLesson: Lesson = null;
+    for (const lesson of this.lessons) {
       if (lesson.dateTimestampInMs.toString() === lessonDescription) {
         foundLesson = lesson;
       }
     }
-    if (!foundLesson) {
+    if (!foundLesson || !foundLesson.studentLessonInfos || foundLesson.studentLessonInfos.length === 0) {
       return false;
     }
-    for (const takenLesson of student.lessons) {
-      if (takenLesson.externalId === foundLesson.externalId) {
-        return takenLesson.tookPart;
+    for (const studentLessonInfo of foundLesson.studentLessonInfos) {
+      if (studentLessonInfo.externalStudentId === student.externalId) {
+        return studentLessonInfo.tookPart;
       }
     }
     return false;

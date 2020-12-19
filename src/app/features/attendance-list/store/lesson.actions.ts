@@ -1,8 +1,23 @@
 import { Lesson } from '../models/lesson';
+import { SchoolSubjectEnum } from '../../../shared/user/models/school-subject-enum';
 
 export class LessonsFetchRequest {
   static readonly type = '[Lesson] Fetch Request';
-  constructor(public externalUserId: string) {}
+  constructor(
+    public externalUserId: string,
+    public externalSchoolClassId: string,
+    public schoolSubject: SchoolSubjectEnum
+  ) {}
+}
+
+export class LessonsFetchRequestSuccess {
+  static readonly type = '[Lesson] Fetch Request Success';
+  constructor(public lessons: Lesson[]) {}
+}
+
+export class LessonsFetchRequestError {
+  static readonly type = '[Lesson] Fetch Request Error';
+  constructor(public error: string) {}
 }
 
 export class CreateLessonRequest {

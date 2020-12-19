@@ -6,14 +6,19 @@ import { Lesson } from '../../attendance-list/models/lesson';
 import {
   CreateLessonError,
   CreateLessonRequest,
-  CreateLessonSuccess
+  CreateLessonSuccess,
+  LessonsFetchRequest,
+  LessonsFetchRequestError,
+  LessonsFetchRequestSuccess
 } from '../../attendance-list/store/lesson.actions';
 import { LessonStateModel } from '../../attendance-list/store/lesson.state.model';
 
 export const initialLessonState: LessonStateModel = {
   lessons: [],
-  createLessonRequestLoading: false,
-  createLessonRequestError: null
+  lessonsFetchRequestLoading: false,
+  lessonsFetchRequestError: null,
+  createLessonRequestActionPerforming: false,
+  createLessonRequestActionError: null
 };
 
 @State<LessonStateModel>({
@@ -31,44 +36,97 @@ export class LessonState {
   }
 
   @Selector()
+  static getLessonsFetchRequestLoading(state: LessonStateModel): boolean {
+    return state.lessonsFetchRequestLoading;
+  }
+
+  @Selector()
+  static getLessonsFetchRequestError(state: LessonStateModel): string {
+    return state.lessonsFetchRequestError;
+  }
+
+  @Selector()
   static isCreateNewLessonRequestLoading(state: LessonStateModel): boolean {
-    return state.createLessonRequestLoading;
+    return state.createLessonRequestActionPerforming;
   }
 
   @Selector()
   static getCreateNewLessonRequestError(state: LessonStateModel): string {
-    return state.createLessonRequestError;
+    return state.createLessonRequestActionError;
   }
 
   // ACTION
+  @Action(LessonsFetchRequest)
+  executeLessonsFetchRequest(ctx: StateContext<LessonStateModel>, action: LessonsFetchRequest): void {
+    console.log('executeLessonsFetchRequest');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      lessonsFetchRequestLoading: true,
+      lessonsFetchRequestError: null
+    });
+    const lessons: Lesson[] = this.lessonService.fetchLessons(
+      action.externalUserId,
+      action.externalSchoolClassId,
+      action.schoolSubject
+    );
+    ctx.dispatch(new LessonsFetchRequestSuccess(lessons));
+  }
+
+  @Action(LessonsFetchRequestSuccess)
+  lessonsFetchRequestSuccess(ctx: StateContext<LessonStateModel>, action: LessonsFetchRequestSuccess): void {
+    console.log('lessonsFetchRequestSuccess');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      lessons: action.lessons,
+      lessonsFetchRequestLoading: false,
+      lessonsFetchRequestError: null
+    });
+  }
+
+  @Action(LessonsFetchRequestError)
+  lessonsFetchRequestError(ctx: StateContext<LessonStateModel>, action: LessonsFetchRequestError): void {
+    console.log('lessonsFetchRequestError');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      lessons: null,
+      lessonsFetchRequestLoading: false,
+      lessonsFetchRequestError: action.error
+    });
+  }
+
   @Action(CreateLessonRequest)
   executeCreateLessonRequest(ctx: StateContext<LessonStateModel>, action: CreateLessonRequest): void {
     console.log('executeCreateLessonRequest');
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      createLessonRequestLoading: true,
-      createLessonRequestError: null
+      createLessonRequestActionPerforming: true,
+      createLessonRequestActionError: null
     });
     this.lessonService.createLesson(action.lessonTimestampInMs);
-    ctx.dispatch(new CreateLessonSuccess({
-      externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
-      dateTimestampInMs: action.lessonTimestampInMs
-    }));
+    ctx.dispatch(
+      new CreateLessonSuccess({
+        externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
+        dateTimestampInMs: action.lessonTimestampInMs
+      })
+    );
   }
 
   @Action(CreateLessonSuccess)
   createLessonSuccess(ctx: StateContext<LessonStateModel>, action: CreateLessonSuccess): void {
     console.log('createLessonSuccess');
     const state = ctx.getState();
-    const updatedLessons = produce(state.lessons, (draftLessons) => {
+    const updatedLessons = produce(state.lessons, draftLessons => {
       draftLessons.push(action.lesson);
     });
     ctx.setState({
       ...state,
       lessons: updatedLessons,
-      createLessonRequestLoading: false,
-      createLessonRequestError: null
+      createLessonRequestActionPerforming: false,
+      createLessonRequestActionError: null
     });
   }
 
@@ -78,8 +136,8 @@ export class LessonState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      createLessonRequestLoading: false,
-      createLessonRequestError: action.error
+      createLessonRequestActionPerforming: false,
+      createLessonRequestActionError: action.error
     });
   }
 }

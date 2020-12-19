@@ -3,6 +3,7 @@ import { SchoolClass } from '../../shared/user/models/school-class';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
 import { SchoolExam } from '../user/models/school-exam';
 import { SchoolExamTypeEnum } from '../user/models/school-exam-type-enum';
+import { Lesson } from '../../features/attendance-list/models/lesson';
 
 export const mockedStudents: Student[] = [
   {
@@ -118,5 +119,75 @@ export const mockedSchoolExams: SchoolExam[] = [
     schoolLevel: '8',
     participatedStudents: [mockedStudents[0], mockedStudents[1]],
     schoolSubject: SchoolSubjectEnum.MATHE
+  }
+];
+
+export const mockedLessons: Lesson[] = [
+  {
+    externalId: 'c97a4ce6-547d-4d6b-8621-a9917a333eac',
+    dateTimestampInMs: new Date(2020, 10, 13).valueOf(),
+    studentLessonInfos: [
+      {
+        externalStudentId: mockedStudents[0].externalId,
+        tookPart: true,
+        note: 'Was an idiot!'
+      },
+      {
+        externalStudentId: mockedStudents[1].externalId,
+        tookPart: true
+      },
+      {
+        externalStudentId: mockedStudents[2].externalId,
+        tookPart: true
+      }
+    ]
+  },
+  {
+    externalId: '3ce93de8-ab72-4305-b9e6-6e430c3bd31e',
+    dateTimestampInMs: new Date(2020, 10, 14).valueOf(),
+    studentLessonInfos: [
+      {
+        externalStudentId: mockedStudents[2].externalId,
+        tookPart: true,
+        note: 'Hat Unterricht massiv gestört'
+      },
+      {
+        externalStudentId: mockedStudents[3].externalId,
+        tookPart: false,
+        note: 'War entschuldigt'
+      }
+    ]
+  },
+  {
+    externalId: '52d39682-1f67-4f40-bcaf-ac7cb0740441',
+    dateTimestampInMs: new Date(2020, 10, 15).valueOf()
+  },
+  {
+    externalId: '2c165919-e03d-43b3-998b-7bc946f636af',
+    dateTimestampInMs: new Date(2020, 10, 16).valueOf()
+  },
+  {
+    externalId: '15d058fa-8c15-46d6-9865-30d3de6fba1e',
+    dateTimestampInMs: new Date(2020, 10, 17).valueOf()
+  },
+  {
+    externalId: 'b30b1d29-f342-4bac-8deb-95a563fe45d8',
+    dateTimestampInMs: new Date(2020, 10, 18).valueOf()
+  },
+  {
+    externalId: '326c717d-ac5e-47f7-a087-630b12121b11',
+    dateTimestampInMs: new Date(2020, 10, 19).valueOf()
+  },
+  {
+    externalId: '78ad1596-6fa9-403e-ade3-d64c5361c838',
+    dateTimestampInMs: new Date(2020, 10, 20).valueOf()
+  },
+  {
+    externalId: 'd71a8ae9-c557-4ef0-8883-b14a4a5cf2fe',
+    dateTimestampInMs: new Date(2020, 10, 21).valueOf()
+  },
+  {
+    externalId: '2377f92f-1e84-463f-9632-9a81027c68af',
+    dateTimestampInMs: new Date(2020, 10, 22).valueOf()
   }
 ];
