@@ -5,7 +5,7 @@ import { UserState } from '../../shared/user/store/user.state';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Lesson } from './models/lesson';
-import { CreateLessonRequest, LessonsFetchRequest } from '../../features/attendance-list/store/lesson.actions';
+import { CreateLessonActionRequest, LessonsFetchRequest } from '../../features/attendance-list/store/lesson.actions';
 import { LessonState } from '../../features/attendance-list/store/lesson.state';
 import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum';
 import { User } from '../../shared/user/models/user';
@@ -80,10 +80,10 @@ export class AttendanceListComponent implements OnInit {
       });
   }
 
-  public hasStudentAttendedLessons(student: Student, lessonDescription: string): boolean {
+  public hasStudentAttendedLessons(student: Student, lessonId: string): boolean {
     let foundLesson: Lesson = null;
     for (const lesson of this.lessons) {
-      if (lesson.dateTimestampInMs.toString() === lessonDescription) {
+      if (lesson.externalId === lessonId) {
         foundLesson = lesson;
       }
     }
@@ -108,11 +108,11 @@ export class AttendanceListComponent implements OnInit {
 
   public createNewLesson(): void {
     console.log('TODO: Erstelle neue Stunde...');
-    this.store.dispatch(new CreateLessonRequest(this.lessonDateFormControl.value.valueOf()));
+    this.store.dispatch(new CreateLessonActionRequest(this.lessonDateFormControl.value.valueOf()));
   }
 
-  public getDateStringFromTimestamp(timestampInMsAsString: string): string {
-    return new Date(+timestampInMsAsString).toLocaleDateString();
+  public getDateStringFromTimestamp(timestampInMsAsString: number): string {
+    return new Date(timestampInMsAsString).toLocaleDateString();
   }
 
   public clickedOnHeader(lessonDescription: string): void {

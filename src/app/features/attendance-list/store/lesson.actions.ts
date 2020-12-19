@@ -20,17 +20,17 @@ export class LessonsFetchRequestError {
   constructor(public error: string) {}
 }
 
-export class CreateLessonRequest {
-  static readonly type = '[Lesson] Create Lesson Request';
+export class CreateLessonActionRequest {
+  static readonly type = '[Lesson] Create Lesson Action Request';
   constructor(public lessonTimestampInMs: number) {}
 }
 
-export class CreateLessonSuccess {
-  static readonly type = '[Lesson] Create Lesson Success';
+export class CreateLessonActionSuccess {
+  static readonly type = '[Lesson] Create Lesson Action Success';
   constructor(public lesson: Lesson) {}
 }
 
-export class CreateLessonError {
-  static readonly type = '[Lesson] Create Lesson Error';
+export class CreateLessonActionError {
+  static readonly type = '[Lesson] Create Lesson Action Error';
   constructor(public error: string) {}
 }

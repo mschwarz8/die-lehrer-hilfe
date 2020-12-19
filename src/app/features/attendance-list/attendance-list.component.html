@@ -16,20 +16,20 @@
         <td mat-cell *matCellDef="let student">{{ student.lastName }}</td>
       </ng-container>
 
-      <ng-container *ngFor="let lessonDescription of lessonColumnDescriptions" matColumnDef="{{ lessonDescription }}">
+      <ng-container *ngFor="let lesson of lessons" matColumnDef="{{ lesson.dateTimestampInMs }}">
         <th
           mat-header-cell
           *matHeaderCellDef
-          [ngClass]="{ 'selected-column': isColumnSelected(lessonDescription) }"
+          [ngClass]="{ 'selected-column': isColumnSelected(lesson.externalId) }"
           class="lesson-column-header"
-          (click)="clickedOnHeader(lessonDescription)"
+          (click)="clickedOnHeader(lesson.externalId)"
         >
-          {{ getDateStringFromTimestamp(lessonDescription) }}
+          {{ getDateStringFromTimestamp(lesson.dateTimestampInMs) }}
         </th>
         <td mat-cell *matCellDef="let student" class="lesson-column-row">
           <mat-checkbox
-            [disabled]="!isColumnSelected(lessonDescription)"
-            [checked]="hasStudentAttendedLessons(student, lessonDescription)"
+            [disabled]="!isColumnSelected(lesson.externalId)"
+            [checked]="hasStudentAttendedLessons(student, lesson.externalId)"
           ></mat-checkbox>
         </td>
       </ng-container>

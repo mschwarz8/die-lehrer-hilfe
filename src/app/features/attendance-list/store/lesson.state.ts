@@ -4,9 +4,9 @@ import produce from 'immer';
 import { LessonService } from '../../attendance-list/services/lesson.service';
 import { Lesson } from '../../attendance-list/models/lesson';
 import {
-  CreateLessonError,
-  CreateLessonRequest,
-  CreateLessonSuccess,
+  CreateLessonActionError,
+  CreateLessonActionRequest,
+  CreateLessonActionSuccess,
   LessonsFetchRequest,
   LessonsFetchRequestError,
   LessonsFetchRequestSuccess
@@ -97,8 +97,8 @@ export class LessonState {
     });
   }
 
-  @Action(CreateLessonRequest)
-  executeCreateLessonRequest(ctx: StateContext<LessonStateModel>, action: CreateLessonRequest): void {
+  @Action(CreateLessonActionRequest)
+  executeCreateLessonRequest(ctx: StateContext<LessonStateModel>, action: CreateLessonActionRequest): void {
     console.log('executeCreateLessonRequest');
     const state = ctx.getState();
     ctx.setState({
@@ -108,15 +108,15 @@ export class LessonState {
     });
     this.lessonService.createLesson(action.lessonTimestampInMs);
     ctx.dispatch(
-      new CreateLessonSuccess({
+      new CreateLessonActionSuccess({
         externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
         dateTimestampInMs: action.lessonTimestampInMs
       })
     );
   }
 
-  @Action(CreateLessonSuccess)
-  createLessonSuccess(ctx: StateContext<LessonStateModel>, action: CreateLessonSuccess): void {
+  @Action(CreateLessonActionSuccess)
+  createLessonSuccess(ctx: StateContext<LessonStateModel>, action: CreateLessonActionSuccess): void {
     console.log('createLessonSuccess');
     const state = ctx.getState();
     const updatedLessons = produce(state.lessons, draftLessons => {
@@ -130,8 +130,8 @@ export class LessonState {
     });
   }
 
-  @Action(CreateLessonError)
-  createLessonError(ctx: StateContext<LessonStateModel>, action: CreateLessonError): void {
+  @Action(CreateLessonActionError)
+  createLessonError(ctx: StateContext<LessonStateModel>, action: CreateLessonActionError): void {
     console.log('createLessonError');
     const state = ctx.getState();
     ctx.setState({
