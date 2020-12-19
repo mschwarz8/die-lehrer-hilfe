@@ -20,21 +20,21 @@ import { Student } from '../../shared/user/models/student';
 export class AttendanceListComponent implements OnInit {
   public createNewLessonFormGroup: FormGroup | undefined;
 
-  lessonColumnDescriptions: string[] = [];
-
-  createNewLessonMode = false;
+  public createNewLessonMode = false;
 
   public lessons: Lesson[];
+
+  public stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
+
+  public lessonColumnDescriptions: string[] = [];
+
+  public totalColumnDescriptions: string[] = [];
 
   @Select(LessonState.getLessons)
   public lessons$: Observable<Lesson[]>;
 
   @Select(LessonState.isCreateNewLessonRequestLoading)
   public createNewLessonRequestLoading$: Observable<boolean>;
-
-  stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
-
-  totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
 
   @Select(UserState.getLoggedInUser)
   public loggedInUser$: Observable<User>;
@@ -45,7 +45,7 @@ export class AttendanceListComponent implements OnInit {
   @Select(UserState.getSelectedSchoolSubject)
   public selectedSchoolSubject$: Observable<SchoolSubjectEnum>;
 
-  datePickerFilter = (date: Date | null): boolean => {
+  public datePickerFilter = (date: Date | null): boolean => {
     return this.lessonColumnDescriptions.indexOf(date.valueOf().toString()) === -1;
   }
 
@@ -55,11 +55,6 @@ export class AttendanceListComponent implements OnInit {
     this.createNewLessonFormGroup = this.fb.group({
       lessonDate: [new Date(), Validators.required]
     });
-
-    // Sort by date
-    this.lessonColumnDescriptions.sort((a, b) => (+a < +b ? -1 : 0));
-
-    this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.lessonColumnDescriptions);
 
     this.lessons$.subscribe(lessons => {
       if (!lessons || lessons.length === 0) {
@@ -106,7 +101,6 @@ export class AttendanceListComponent implements OnInit {
   }
 
   public lessonAlreadyPresent(): boolean {
-    console.log(this.lessonDateFormControl.value.valueOf().toString());
     return this.lessonColumnDescriptions.indexOf(this.lessonDateFormControl.value.valueOf().toString()) !== -1;
   }
 
