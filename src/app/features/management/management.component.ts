@@ -8,6 +8,7 @@ import { SchoolClass } from '../../shared/user/models/school-class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { AddSchoolSubjectDialogComponent } from './add-school-subject-dialog/add-school-subject-dialog.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-management',
@@ -40,7 +41,13 @@ export class ManagementComponent implements OnInit {
     return !!this.students && this.students.length > 0;
   }
 
-  constructor(private fb: FormBuilder, private store: Store, public matDialog: MatDialog) {}
+  constructor(
+    private fb: FormBuilder,
+    private store: Store,
+    public matDialog: MatDialog,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.createNewSchoolClassFormGroup = this.fb.group({
@@ -73,8 +80,7 @@ export class ManagementComponent implements OnInit {
     this.store.dispatch(new CreateSchoolClassActionRequest(this.classNameFormControl.value, this.students.value));
   }
 
-  public actionButtonClicked(schoolClass: SchoolClass): void {
-    console.log(schoolClass.name);
+  public addSchoolSubject(schoolClass: SchoolClass): void {
     const dialogRef = this.matDialog.open(AddSchoolSubjectDialogComponent, {
       width: '250px',
       data: { schoolClass }
@@ -83,6 +89,12 @@ export class ManagementComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });
+  }
+
+  public editClass(schoolClass: SchoolClass): void {
+    console.log('Editing schoolClass ' + schoolClass.name);
+    console.log('Navigating to new component');
+    this.router.navigate(['../school-class', schoolClass.externalId, 'edit'], { relativeTo: this.activatedRoute });
   }
 
   public get classNameFormControl(): FormControl {
