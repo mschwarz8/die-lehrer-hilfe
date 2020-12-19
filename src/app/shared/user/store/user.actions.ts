@@ -22,32 +22,32 @@ export class SelectSchoolSubject {
   constructor(public selectedSchoolSubject: SchoolSubjectEnum) {}
 }
 
-export class CreateSchoolClassRequest {
-  static readonly type = '[User] Create SchoolClass Request';
+export class CreateSchoolClassActionRequest {
+  static readonly type = '[User] Create SchoolClass Action Request';
   constructor(public schoolClassname: string, public students: Student[]) {}
 }
 
-export class CreateSchoolClassSuccess {
-  static readonly type = '[User] Create SchoolClass Success';
+export class CreateSchoolClassActionSuccess {
+  static readonly type = '[User] Create SchoolClass Action Success';
   constructor(public schoolClass: SchoolClass) {}
 }
 
-export class CreateSchoolClassError {
-  static readonly type = '[User] Create SchoolClass Error';
+export class CreateSchoolClassActionError {
+  static readonly type = '[User] Create SchoolClass Action Error';
   constructor(public error: string) {}
 }
 
-export class AddSchoolSubjectRequest {
-  static readonly type = '[User] Add SchoolSubject Request';
+export class AddSchoolSubjectActionRequest {
+  static readonly type = '[User] Add SchoolSubject Action Request';
   constructor(public externalSchoolClassId: string, public schoolSubject: SchoolSubjectEnum) {}
 }
 
-export class AddSchoolSubjectSuccess {
-  static readonly type = '[User] Add SchoolSubject Success';
+export class AddSchoolSubjectActionSuccess {
+  static readonly type = '[User] Add SchoolSubject Action Success';
   constructor(public schoolClass: SchoolClass) {}
 }
 
-export class AddSchoolSubjectError {
-  static readonly type = '[User] Add SchoolSubject Error';
+export class AddSchoolSubjectActionError {
+  static readonly type = '[User] Add SchoolSubject Action Error';
   constructor(public error: string) {}
 }

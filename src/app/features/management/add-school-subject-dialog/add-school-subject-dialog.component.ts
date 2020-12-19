@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { SchoolSubjectEnum } from './../../../shared/user/models/school-subject-enum';
 import { SchoolClass } from '../../../shared/user/models/school-class';
 import { Store } from '@ngxs/store';
-import { AddSchoolSubjectRequest } from '../../../shared/user/store/user.actions';
+import { AddSchoolSubjectActionRequest } from '../../../shared/user/store/user.actions';
 
 export interface AddSchoolSubjectDialogData {
   schoolClass: SchoolClass;
@@ -40,7 +40,7 @@ export class AddSchoolSubjectDialogComponent {
 
   onOkClick(): void {
     this.store.dispatch(
-      new AddSchoolSubjectRequest(this.data.schoolClass.externalId, this.schoolSubjectFormControl.value)
+      new AddSchoolSubjectActionRequest(this.data.schoolClass.externalId, this.schoolSubjectFormControl.value)
     );
     this.dialogRef.close();
   }

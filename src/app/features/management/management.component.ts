@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { Select, Store } from '@ngxs/store';
 import { UserState } from '../../shared/user/store/user.state';
 import { Observable } from 'rxjs';
-import { CreateSchoolClassRequest } from '../../shared/user/store/user.actions';
+import { CreateSchoolClassActionRequest } from '../../shared/user/store/user.actions';
 import { SchoolClass } from '../../shared/user/models/school-class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -70,7 +70,7 @@ export class ManagementComponent implements OnInit {
 
   public createNewClass(): void {
     console.log('TODO: Erstelle neue Klasse...');
-    this.store.dispatch(new CreateSchoolClassRequest(this.classNameFormControl.value, this.students.value));
+    this.store.dispatch(new CreateSchoolClassActionRequest(this.classNameFormControl.value, this.students.value));
   }
 
   public actionButtonClicked(schoolClass: SchoolClass): void {

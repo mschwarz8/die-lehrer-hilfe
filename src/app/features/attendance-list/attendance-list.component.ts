@@ -58,6 +58,7 @@ export class AttendanceListComponent implements OnInit {
 
     this.lessons$.subscribe(lessons => {
       if (!lessons || lessons.length === 0) {
+        this.lessons = [];
         return;
       }
       this.lessons = lessons;

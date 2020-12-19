@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { UserStateModel } from './user.state.model';
 import {
-  AddSchoolSubjectError,
-  AddSchoolSubjectRequest,
-  AddSchoolSubjectSuccess,
+  AddSchoolSubjectActionError,
+  AddSchoolSubjectActionRequest,
+  AddSchoolSubjectActionSuccess,
   AvailableSchoolClassesFetchRequest,
-  CreateSchoolClassError,
-  CreateSchoolClassRequest,
-  CreateSchoolClassSuccess,
+  CreateSchoolClassActionError,
+  CreateSchoolClassActionRequest,
+  CreateSchoolClassActionSuccess,
   LoginUser,
   SelectSchoolClass,
   SelectSchoolSubject
@@ -97,12 +97,7 @@ export class UserState {
       ...state,
       availableSchoolClasses: mockedSchoolClasses,
       // For debugging selecting the first schoolClass
-      selectedSchoolClass: {
-        externalId: '5eb5d76a-bb29-4419-83c3-ab87226886fc',
-        name: '8b',
-        students: [],
-        schoolSubjects: [SchoolSubjectEnum.MATHE]
-      },
+      selectedSchoolClass: mockedSchoolClasses[0],
       // For debugging selecting the first schoolSubject
       selectedSchoolSubject: SchoolSubjectEnum.MATHE
     });
@@ -129,8 +124,8 @@ export class UserState {
     });
   }
 
-  @Action(CreateSchoolClassRequest)
-  executeCreateSchoolClassRequest(ctx: StateContext<UserStateModel>, action: CreateSchoolClassRequest): void {
+  @Action(CreateSchoolClassActionRequest)
+  executeCreateSchoolClassRequest(ctx: StateContext<UserStateModel>, action: CreateSchoolClassActionRequest): void {
     console.log('executeCreateSchoolClassRequest');
     const state = ctx.getState();
     ctx.setState({
@@ -140,7 +135,7 @@ export class UserState {
     });
     this.schoolClassService.createNewSchoolClass(action.schoolClassname, action.students);
     ctx.dispatch(
-      new CreateSchoolClassSuccess({
+      new CreateSchoolClassActionSuccess({
         externalId: '957fd09d-6d97-4be5-a936-b325d1b5fb38',
         name: action.schoolClassname,
         students: action.students
@@ -148,8 +143,8 @@ export class UserState {
     );
   }
 
-  @Action(CreateSchoolClassSuccess)
-  executeCreateSchoolClassSuccess(ctx: StateContext<UserStateModel>, action: CreateSchoolClassSuccess): void {
+  @Action(CreateSchoolClassActionSuccess)
+  executeCreateSchoolClassSuccess(ctx: StateContext<UserStateModel>, action: CreateSchoolClassActionSuccess): void {
     console.log('executeCreateSchoolClassSuccess');
     const state = ctx.getState();
     const updatedAvailableSchoolClasses = produce(state.availableSchoolClasses, draftAvailableSchoolClasses => {
@@ -163,8 +158,8 @@ export class UserState {
     });
   }
 
-  @Action(CreateSchoolClassError)
-  executeCreateSchoolClassError(ctx: StateContext<UserStateModel>, action: CreateSchoolClassError): void {
+  @Action(CreateSchoolClassActionError)
+  executeCreateSchoolClassError(ctx: StateContext<UserStateModel>, action: CreateSchoolClassActionError): void {
     console.log('executeCreateSchoolClassError');
     const state = ctx.getState();
     ctx.setState({
@@ -174,8 +169,8 @@ export class UserState {
     });
   }
 
-  @Action(AddSchoolSubjectRequest)
-  executeAddSchoolSubjectRequest(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectRequest): void {
+  @Action(AddSchoolSubjectActionRequest)
+  executeAddSchoolSubjectRequest(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectActionRequest): void {
     console.log('executeAddSchoolSubjectRequest');
     const state = ctx.getState();
     ctx.setState({
@@ -197,11 +192,11 @@ export class UserState {
       ...state,
       availableSchoolClasses: updatedAvailableSchoolClasses
     });
-    ctx.dispatch(new AddSchoolSubjectSuccess(updatedSchoolClass));
+    ctx.dispatch(new AddSchoolSubjectActionSuccess(updatedSchoolClass));
   }
 
-  @Action(AddSchoolSubjectSuccess)
-  addSchoolSubjectSuccess(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectSuccess): void {
+  @Action(AddSchoolSubjectActionSuccess)
+  addSchoolSubjectSuccess(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectActionSuccess): void {
     console.log('addSchoolSubjectSuccess');
     const state = ctx.getState();
     ctx.setState({
@@ -211,8 +206,8 @@ export class UserState {
     });
   }
 
-  @Action(AddSchoolSubjectError)
-  addSchoolSubjectError(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectError): void {
+  @Action(AddSchoolSubjectActionError)
+  addSchoolSubjectError(ctx: StateContext<UserStateModel>, action: AddSchoolSubjectActionError): void {
     console.log('addSchoolSubjectError');
     const state = ctx.getState();
     ctx.setState({
