@@ -17,4 +17,8 @@ export interface UserStateModel {
   // Add SchoolSubject to SchoolClass
   addSchoolSubjectToSchoolClassLoading: boolean;
   addSchoolSubjectToSchoolClassError: string;
+
+  // Add Student to SchoolClass
+  addStudentToSchoolClassLoading: boolean;
+  addStudentToSchoolClassError: string;
 }

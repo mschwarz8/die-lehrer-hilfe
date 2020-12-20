@@ -38,7 +38,7 @@
     </td>
     <td mat-footer-cell *matFooterCellDef>
       <ng-container *ngIf="!addStudentModeActive; else addStudentMode">
-        <button mat-button (click)="addStudentModeActive = true">
+        <button mat-button [disabled]="isAddStudentToSchoolClassLoading$ | async" (click)="addStudentModeActive = true">
           <mat-icon>add</mat-icon>
         </button>
       </ng-container>
@@ -46,7 +46,7 @@
         <button mat-button (click)="addStudentModeActive = false">
           <mat-icon>close</mat-icon>
         </button>
-        <button mat-button [disabled]="!confirmAddStudentButtonEnabled" (click)="addNewStudent()">
+        <button mat-button [disabled]="!confirmAddStudentButtonEnabled || (isAddStudentToSchoolClassLoading$ | async)" (click)="addNewStudent()">
           <mat-icon>check</mat-icon>
         </button>
       </ng-template>

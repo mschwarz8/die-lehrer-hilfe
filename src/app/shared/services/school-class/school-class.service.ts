@@ -28,4 +28,13 @@ export class SchoolClassService {
       schoolSubjects: [schoolSubject]
     };
   }
+
+  public addStudentToSchoolClass(externalSchoolClassId: string, firstName: string, lastName: string): Student {
+    console.log('Adding student ' + firstName + ' ' + lastName + ' to schoolClass ' + externalSchoolClassId);
+    return {
+      externalId: 'e8711059-be46-4899-b30c-28e3a4f6c9f9',
+      firstName,
+      lastName
+    };
+  }
 }

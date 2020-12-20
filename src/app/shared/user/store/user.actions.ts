@@ -51,3 +51,18 @@ export class AddSchoolSubjectActionError {
   static readonly type = '[User] Add SchoolSubject Action Error';
   constructor(public error: string) {}
 }
+
+export class AddStudentActionRequest {
+  static readonly type = '[User] Add Student Action Request';
+  constructor(public externalSchoolClassId: string, public firstName: string, public lastName: string) {}
+}
+
+export class AddStudentActionSuccess {
+  static readonly type = '[User] Add Student Action Success';
+  constructor(public externalSchoolClassId: string, public createdStudent: Student) {}
+}
+
+export class AddStudentActionError {
+  static readonly type = '[User] Add Student Action Error';
+  constructor(public error: string) {}
+}

@@ -4,7 +4,7 @@ import { UserStateModel } from './user.state.model';
 import {
   AddSchoolSubjectActionError,
   AddSchoolSubjectActionRequest,
-  AddSchoolSubjectActionSuccess,
+  AddSchoolSubjectActionSuccess, AddStudentActionError, AddStudentActionRequest, AddStudentActionSuccess,
   AvailableSchoolClassesFetchRequest,
   CreateSchoolClassActionError,
   CreateSchoolClassActionRequest,
@@ -19,6 +19,7 @@ import { SchoolClass } from '../models/school-class';
 import produce from 'immer';
 import { SchoolSubjectEnum } from '../models/school-subject-enum';
 import { mockedSchoolClasses } from '../../mocks/mocked-data';
+import { Student } from '../models/student';
 
 export const initialUserState: UserStateModel = {
   loggedInUser: null,
@@ -28,7 +29,9 @@ export const initialUserState: UserStateModel = {
   createNewSchoolClassRequestLoading: false,
   createNewSchoolClassRequestError: null,
   addSchoolSubjectToSchoolClassLoading: false,
-  addSchoolSubjectToSchoolClassError: null
+  addSchoolSubjectToSchoolClassError: null,
+  addStudentToSchoolClassLoading: false,
+  addStudentToSchoolClassError: null
 };
 
 @State<UserStateModel>({
@@ -68,6 +71,16 @@ export class UserState {
   @Selector()
   static getCreateNewSchoolClassRequestError(state: UserStateModel): string {
     return state.createNewSchoolClassRequestError;
+  }
+
+  @Selector()
+  static isAddStudentToSchoolClassLoading(state: UserStateModel): boolean {
+    return state.addStudentToSchoolClassLoading;
+  }
+
+  @Selector()
+  static getAddStudentToSchoolClassError(state: UserStateModel): string {
+    return state.addStudentToSchoolClassError;
   }
 
   // ACTION
@@ -214,6 +227,52 @@ export class UserState {
       ...state,
       addSchoolSubjectToSchoolClassLoading: false,
       addSchoolSubjectToSchoolClassError: action.error
+    });
+  }
+
+  @Action(AddStudentActionRequest)
+  executeAddStudentActionRequest(ctx: StateContext<UserStateModel>, action: AddStudentActionRequest): void {
+    console.log('executeAddStudentActionRequest');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addStudentToSchoolClassLoading: true,
+      addStudentToSchoolClassError: null
+    });
+    const createdStudent: Student =
+      this.schoolClassService.addStudentToSchoolClass(action.externalSchoolClassId, action.firstName, action.lastName);
+    ctx.dispatch(new AddStudentActionSuccess(action.externalSchoolClassId, createdStudent));
+  }
+
+  @Action(AddStudentActionSuccess)
+  addStudentActionSuccess(ctx: StateContext<UserStateModel>, action: AddStudentActionSuccess): void {
+    console.log('addStudentActionSuccess');
+    const state = ctx.getState();
+    let updatedSchoolClass: SchoolClass;
+    const updatedAvailableSchoolClasses = produce(state.availableSchoolClasses, draftAvailableSchoolClasses => {
+      for (const schoolClass of draftAvailableSchoolClasses) {
+        if (schoolClass.externalId === action.externalSchoolClassId) {
+          schoolClass.students.push(action.createdStudent);
+          updatedSchoolClass = schoolClass;
+        }
+      }
+    });
+    ctx.setState({
+      ...state,
+      availableSchoolClasses: updatedAvailableSchoolClasses,
+      addStudentToSchoolClassLoading: false,
+      addStudentToSchoolClassError: null
+    });
+  }
+
+  @Action(AddStudentActionError)
+  addStudentActionError(ctx: StateContext<UserStateModel>, action: AddStudentActionError): void {
+    console.log('addStudentActionError');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addStudentToSchoolClassLoading: false,
+      addStudentToSchoolClassError: action.error
     });
   }
 }
