@@ -7,6 +7,7 @@ import { SchoolClass } from '../../../shared/user/models/school-class';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Student } from '../../../shared/user/models/student';
 import { MatTableDataSource } from '@angular/material/table';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-school-class',
@@ -20,12 +21,22 @@ export class EditSchoolClassComponent implements OnInit {
 
   public dataSource: MatTableDataSource<Student>;
 
+  public firstNameFormControl: FormControl;
+
+  public lastNameFormControl: FormControl;
+
   @Select(UserState.getAvailableSchoolClasses)
   public availableSchoolClasses$: Observable<SchoolClass[]>;
 
   public displayedColumns: string[] = ['firstName', 'lastName', 'action'];
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  public addStudentModeActive = false;
+
+  public get confirmAddStudentButtonEnabled(): boolean {
+    return this.firstNameFormControl.valid && this.lastNameFormControl.valid;
+  }
+
+  constructor(private activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -45,10 +56,14 @@ export class EditSchoolClassComponent implements OnInit {
           }
         }
       });
+
+    this.firstNameFormControl = this.fb.control(null, Validators.required);
+    this.lastNameFormControl = this.fb.control(null, Validators.required);
   }
 
-  public addStudent(firstName: string, lastName: string): void {
-    console.log('Should add new student ' + firstName + ' ' + lastName);
+  public addNewStudent(): void {
+    this.addStudentModeActive = false;
+    console.log('Should add new student ' + this.firstNameFormControl.value + ' ' + this.lastNameFormControl.value);
     console.log('Should dispatch action for creating a new student');
     this.dataSource._updateChangeSubscription();
   }
