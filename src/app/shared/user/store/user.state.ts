@@ -26,12 +26,12 @@ export const initialUserState: UserStateModel = {
   selectedSchoolClass: null,
   selectedSchoolSubject: null,
   availableSchoolClasses: [],
-  createNewSchoolClassRequestLoading: false,
-  createNewSchoolClassRequestError: null,
-  addSchoolSubjectToSchoolClassLoading: false,
-  addSchoolSubjectToSchoolClassError: null,
-  addStudentToSchoolClassLoading: false,
-  addStudentToSchoolClassError: null
+  createNewSchoolClassRequestActionPerforming: false,
+  createNewSchoolClassRequestActionError: null,
+  addSchoolSubjectToSchoolClassActionPerforming: false,
+  addSchoolSubjectToSchoolClassActionError: null,
+  addStudentToSchoolClassActionPerforming: false,
+  addStudentToSchoolClassActionError: null
 };
 
 @State<UserStateModel>({
@@ -65,22 +65,22 @@ export class UserState {
 
   @Selector()
   static isCreateNewSchoolClassRequestLoading(state: UserStateModel): boolean {
-    return state.createNewSchoolClassRequestLoading;
+    return state.createNewSchoolClassRequestActionPerforming;
   }
 
   @Selector()
   static getCreateNewSchoolClassRequestError(state: UserStateModel): string {
-    return state.createNewSchoolClassRequestError;
+    return state.createNewSchoolClassRequestActionError;
   }
 
   @Selector()
   static isAddStudentToSchoolClassLoading(state: UserStateModel): boolean {
-    return state.addStudentToSchoolClassLoading;
+    return state.addStudentToSchoolClassActionPerforming;
   }
 
   @Selector()
   static getAddStudentToSchoolClassError(state: UserStateModel): string {
-    return state.addStudentToSchoolClassError;
+    return state.addStudentToSchoolClassActionError;
   }
 
   // ACTION
@@ -143,8 +143,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      createNewSchoolClassRequestLoading: true,
-      createNewSchoolClassRequestError: null
+      createNewSchoolClassRequestActionPerforming: true,
+      createNewSchoolClassRequestActionError: null
     });
     this.schoolClassService.createNewSchoolClass(action.schoolClassname, action.students);
     ctx.dispatch(
@@ -166,8 +166,8 @@ export class UserState {
     ctx.setState({
       ...state,
       availableSchoolClasses: updatedAvailableSchoolClasses,
-      createNewSchoolClassRequestLoading: false,
-      createNewSchoolClassRequestError: null
+      createNewSchoolClassRequestActionPerforming: false,
+      createNewSchoolClassRequestActionError: null
     });
   }
 
@@ -177,8 +177,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      createNewSchoolClassRequestLoading: false,
-      createNewSchoolClassRequestError: action.error
+      createNewSchoolClassRequestActionPerforming: false,
+      createNewSchoolClassRequestActionError: action.error
     });
   }
 
@@ -188,8 +188,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      addSchoolSubjectToSchoolClassLoading: true,
-      addSchoolSubjectToSchoolClassError: null
+      addSchoolSubjectToSchoolClassActionPerforming: true,
+      addSchoolSubjectToSchoolClassActionError: null
     });
     this.schoolClassService.addSchoolSubjectToSchoolClass(action.externalSchoolClassId, action.schoolSubject);
     let updatedSchoolClass: SchoolClass;
@@ -214,8 +214,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      addSchoolSubjectToSchoolClassLoading: false,
-      addSchoolSubjectToSchoolClassError: null
+      addSchoolSubjectToSchoolClassActionPerforming: false,
+      addSchoolSubjectToSchoolClassActionError: null
     });
   }
 
@@ -225,8 +225,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      addSchoolSubjectToSchoolClassLoading: false,
-      addSchoolSubjectToSchoolClassError: action.error
+      addSchoolSubjectToSchoolClassActionPerforming: false,
+      addSchoolSubjectToSchoolClassActionError: action.error
     });
   }
 
@@ -236,8 +236,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      addStudentToSchoolClassLoading: true,
-      addStudentToSchoolClassError: null
+      addStudentToSchoolClassActionPerforming: true,
+      addStudentToSchoolClassActionError: null
     });
     const createdStudent: Student =
       this.schoolClassService.addStudentToSchoolClass(action.externalSchoolClassId, action.firstName, action.lastName);
@@ -260,8 +260,8 @@ export class UserState {
     ctx.setState({
       ...state,
       availableSchoolClasses: updatedAvailableSchoolClasses,
-      addStudentToSchoolClassLoading: false,
-      addStudentToSchoolClassError: null
+      addStudentToSchoolClassActionPerforming: false,
+      addStudentToSchoolClassActionError: null
     });
   }
 
@@ -271,8 +271,8 @@ export class UserState {
     const state = ctx.getState();
     ctx.setState({
       ...state,
-      addStudentToSchoolClassLoading: false,
-      addStudentToSchoolClassError: action.error
+      addStudentToSchoolClassActionPerforming: false,
+      addStudentToSchoolClassActionError: action.error
     });
   }
 }

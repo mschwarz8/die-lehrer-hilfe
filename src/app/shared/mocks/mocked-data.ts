@@ -113,7 +113,7 @@ export const mockedSchoolExams: SchoolExam[] = [
     schoolSubject: SchoolSubjectEnum.MATHE
   },
   {
-    externalId: '14f45c70-28ae-4be1-b206-70d86c9da155',
+    externalId: '32a93fd8-61a9-4168-ba74-1962e6469d72',
     name: 'Ausfrage',
     type: SchoolExamTypeEnum.QUESTIONING,
     schoolLevel: '8',

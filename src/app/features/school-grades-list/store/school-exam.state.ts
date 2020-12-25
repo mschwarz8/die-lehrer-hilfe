@@ -1,18 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { SchoolExamStateModel } from '../../../features/school-grades-list/store/school-exam.state.model';
-import { SchoolExamService } from '../../../features/school-grades-list/services/school-exam.service';
-import { SchoolExam } from '../../../shared/user/models/school-exam';
+import { SchoolExamStateModel } from '@/app/features/school-grades-list/store/school-exam.state.model';
+import { SchoolExamService } from '@/app/features/school-grades-list/services/school-exam.service';
 import {
+  AddSchoolExamActionError,
+  AddSchoolExamActionRequest, AddSchoolExamActionSuccess,
   SchoolExamsFetchError,
   SchoolExamsFetchRequest,
   SchoolExamsFetchSuccess
 } from './school-exam.actions';
+import { SchoolExam } from '@shared/user/models/school-exam';
+import produce from 'immer';
 
 export const initialSchoolExamState: SchoolExamStateModel = {
   schoolExams: [],
   schoolExamsFetchRequestLoading: false,
-  schoolExamsFetchRequestError: null
+  schoolExamsFetchRequestError: null,
+  addSchoolExamActionPerforming: false,
+  addSchoolExamActionError: null
 };
 
 @State<SchoolExamStateModel>({
@@ -37,6 +42,16 @@ export class SchoolExamState {
   @Selector()
   static getSchoolExamsFetchRequestError(state: SchoolExamStateModel): string {
     return state.schoolExamsFetchRequestError;
+  }
+
+  @Selector()
+  static isAddSchoolExamActionPerforming(state: SchoolExamStateModel): boolean {
+    return state.addSchoolExamActionPerforming;
+  }
+
+  @Selector()
+  static getAddSchoolExamActionError(state: SchoolExamStateModel): string {
+    return state.addSchoolExamActionError;
   }
 
   // ACTION
@@ -73,6 +88,52 @@ export class SchoolExamState {
       schoolExams: null,
       schoolExamsFetchRequestLoading: false,
       schoolExamsFetchRequestError: action.error
+    });
+  }
+
+  @Action(AddSchoolExamActionRequest)
+  addSchoolExamActionRequest(ctx: StateContext<SchoolExamStateModel>, action: AddSchoolExamActionRequest): void {
+    console.log('addSchoolExamActionRequest');
+    console.log('Adding schoolExams for user ' + action.externalUserId + ' ...');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      addSchoolExamActionPerforming: true,
+      addSchoolExamActionError: null
+    });
+    const schoolExam: SchoolExam = this.schoolExamService.addSchoolExam(
+      action.externalUserId,
+      action.name,
+      action.type,
+      action.dateTimestampInMs
+    );
+    ctx.dispatch(new AddSchoolExamActionSuccess(schoolExam));
+  }
+
+  @Action(AddSchoolExamActionSuccess)
+  addSchoolExamActionSuccess(ctx: StateContext<SchoolExamStateModel>, action: AddSchoolExamActionSuccess): void {
+    console.log('addSchoolExamActionSuccess');
+    const state = ctx.getState();
+    const updatedSchoolExams = produce(state.schoolExams, draftSchoolExams => {
+      draftSchoolExams.push(action.schoolExam);
+    });
+    ctx.setState({
+      ...state,
+      schoolExams: updatedSchoolExams,
+      addSchoolExamActionPerforming: false,
+      addSchoolExamActionError: null
+    });
+  }
+
+  @Action(AddSchoolExamActionError)
+  addSchoolExamActionError(ctx: StateContext<SchoolExamStateModel>, action: AddSchoolExamActionError): void {
+    console.log('addSchoolExamActionError');
+    const state = ctx.getState();
+    ctx.setState({
+      ...state,
+      schoolExams: null,
+      addSchoolExamActionPerforming: false,
+      addSchoolExamActionError: action.error
     });
   }
 }

@@ -7,15 +7,10 @@ import { SchoolSubjectEnum } from '../../shared/user/models/school-subject-enum'
 import { SchoolExamTypeEnum } from '../../shared/user/models/school-exam-type-enum';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { User } from '../../shared/user/models/user';
-import { SchoolExamsFetchRequest } from './store/school-exam.actions';
+import { AddSchoolExamActionRequest, SchoolExamsFetchRequest } from './store/school-exam.actions';
 import { distinctUntilChanged } from 'rxjs/operators';
-
-export interface Exam {
-  name: string;
-  type: SchoolExamTypeEnum;
-  externalId: string;
-  dateTimestampInMs?: number; // For type QUESTIONING and COLLABORATION not needed
-}
+import { SchoolExamState } from './store/school-exam.state';
+import { SchoolExam } from '../../shared/user/models/school-exam';
 
 export interface StudentExam {
   externalId: string;
@@ -30,44 +25,6 @@ export interface Student {
   lastName: string;
   exams: StudentExam[];
 }
-
-const EXAM_DATA: Exam[] = [
-  {
-    name: 'Mitarbeitsnote',
-    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
-    externalId: '2b20693f-2e25-4351-8dca-610351270cb8'
-  },
-  {
-    name: '1. Schulaufgabe',
-    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
-    externalId: '46865d07-ef99-45aa-b8a9-de047e62609f',
-    dateTimestampInMs: new Date(2020, 9, 14).valueOf()
-  },
-  {
-    name: '1. Stegreifaufgabe',
-    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
-    externalId: 'a353300a-b859-479d-b492-d18d24ae08b4',
-    dateTimestampInMs: new Date(2020, 9, 20).valueOf()
-  },
-  {
-    name: '2. Stegreifaufgabe',
-    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
-    externalId: 'd12a30fe-efe5-4087-aef9-b60c9ad8e9f3',
-    dateTimestampInMs: new Date(2020, 9, 22).valueOf()
-  },
-  {
-    name: '2. Schulaufgabe',
-    type: SchoolExamTypeEnum.SCHOOL_ASSIGNMENT,
-    externalId: '83864a61-c13e-4488-847a-30089fd24692',
-    dateTimestampInMs: new Date(2020, 11, 2).valueOf()
-  },
-  {
-    name: '3. Stegreifaufgabe',
-    type: SchoolExamTypeEnum.IMPROMPTU_TASK,
-    externalId: '99b4ffde-9458-4fb5-9527-6dea4dbfdd42',
-    dateTimestampInMs: new Date(2021, 1, 10).valueOf()
-  }
-];
 
 const STUDENTS_DATA: Student[] = [
   {
@@ -135,11 +92,26 @@ export class SchoolGradesListComponent implements OnInit {
 
   stickyColumnDescriptions: string[] = ['firstName', 'lastName'];
   students = STUDENTS_DATA;
-  examData = EXAM_DATA;
 
   totalColumnDescriptions: string[] = [];
 
   schoolExamTypes: SchoolExamTypeEnum[] = Object.values(SchoolExamTypeEnum);
+
+  private loggedInUser: User;
+
+  private schoolExams: SchoolExam[] = [];
+
+  @Select(SchoolExamState.getSchoolExams)
+  public schoolExams$: Observable<SchoolExam[]>;
+
+  @Select(SchoolExamState.isSchoolExamsFetchRequestLoading)
+  public isSchoolExamsFetchRequestLoading$: Observable<boolean>;
+
+  @Select(SchoolExamState.isAddSchoolExamActionPerforming)
+  public isAddSchoolExamActionPerforming$: Observable<boolean>;
+
+  @Select(SchoolExamState.getAddSchoolExamActionError)
+  public addSchoolExamActionError: Observable<string>;
 
   @Select(UserState.getLoggedInUser)
   public loggedInUser$: Observable<User>;
@@ -155,17 +127,23 @@ export class SchoolGradesListComponent implements OnInit {
   constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
-    const columnDescriptions: string[] = [];
-    for (const exam of EXAM_DATA) {
-      if (!columnDescriptions.includes(exam.externalId)) {
-        columnDescriptions.push(exam.externalId);
+    this.schoolExams$.subscribe(schoolExams => {
+      if (!schoolExams || schoolExams.length === 0) {
+        return;
       }
-    }
-    this.examColumnDescriptions = columnDescriptions;
+      this.schoolExams = schoolExams;
+      const columnDescriptions: string[] = [];
+      for (const exam of this.schoolExams) {
+        if (!columnDescriptions.includes(exam.externalId)) {
+          columnDescriptions.push(exam.externalId);
+        }
+      }
+      this.examColumnDescriptions = columnDescriptions;
 
-    this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.examColumnDescriptions);
+      this.totalColumnDescriptions = this.stickyColumnDescriptions.concat(this.examColumnDescriptions);
 
-    this.totalColumnDescriptions.push('totalGrade');
+      this.totalColumnDescriptions.push('totalGrade');
+    });
 
     this.addNewGradeFormGroup = this.fb.group({
       gradeName: [null, Validators.required],
@@ -176,6 +154,7 @@ export class SchoolGradesListComponent implements OnInit {
     combineLatest([this.loggedInUser$, this.selectedSchoolClass$, this.selectedSchoolSubject$])
       .pipe(distinctUntilChanged())
       .subscribe(([loggedInUser, selectedSchoolClass, selectedSchoolSubject]) => {
+        this.loggedInUser = loggedInUser;
         if (!!loggedInUser && !!selectedSchoolClass && !!selectedSchoolSubject) {
           this.store.dispatch(
             new SchoolExamsFetchRequest(loggedInUser.externalId, selectedSchoolClass.externalId, selectedSchoolSubject)
@@ -204,9 +183,9 @@ export class SchoolGradesListComponent implements OnInit {
     let gradeSum = 0;
     let numberOfGrades = 0;
     for (const exam of student.exams) {
-      const examIndex = EXAM_DATA.findIndex(examData => examData.externalId === exam.externalId);
+      const examIndex = this.schoolExams.findIndex(examData => examData.externalId === exam.externalId);
       if (examIndex !== -1 && !!exam.grade) {
-        const examObject = EXAM_DATA[examIndex];
+        const examObject = this.schoolExams[examIndex];
         let gradeWeight = 1;
         if (examObject.type === SchoolExamTypeEnum.SCHOOL_ASSIGNMENT) {
           gradeWeight = 3;
@@ -230,6 +209,16 @@ export class SchoolGradesListComponent implements OnInit {
     console.log(this.addNewGradeNameFormControl.value);
     console.log(this.addNewGradeTypeFormControl.value);
     console.log(this.addNewGradeDateFormControl.value);
+    if (!!this.loggedInUser && !!this.loggedInUser.externalId) {
+      this.store.dispatch(
+        new AddSchoolExamActionRequest(
+          this.loggedInUser.externalId,
+          this.addNewGradeNameFormControl.value,
+          this.addNewGradeTypeFormControl.value,
+          this.addNewGradeDateFormControl.value
+        )
+      );
+    }
   }
 
   public addNewGradeButtonDisabled(): boolean {
